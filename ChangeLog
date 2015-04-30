@@ -1,3 +1,8 @@
+1.11-1.13
+* added support for CMake and QMake (Stefan Roettger)
+* misc. minor changes on the build system (Stefan Roettger)
+* added svg icon (Stefan Roettger)
+
 1.10
 * Iterative cluster fit is now considered to be a new compression mode
 * The core cluster fit is now 4x faster using contributions by Ignacio
