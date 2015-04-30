@@ -54,7 +54,7 @@ enum
     kColourClusterFit = ( 1 << 3 ),
 
     //! Use a fast but low quality colour compressor.
-    kColourRangeFit    = ( 1 << 4 ),
+    kColourRangeFit = ( 1 << 4 ),
 
     //! Weight the colour by alpha during cluster fit (disabled by default).
     kWeightColourByAlpha = ( 1 << 7 )
@@ -64,11 +64,11 @@ enum
 
 /*! @brief Compresses a 4x4 block of pixels.
 
-    @param rgba        The rgba values of the 16 source pixels.
-    @param mask        The valid pixel mask.
-    @param block    Storage for the compressed DXT block.
-    @param flags    Compression flags.
-    @param metric    An optional perceptual metric.
+    @param rgba   The rgba values of the 16 source pixels.
+    @param mask   The valid pixel mask.
+    @param block  Storage for the compressed DXT block.
+    @param flags  Compression flags.
+    @param metric An optional perceptual metric.
 
     The source pixels should be presented as a contiguous array of 16 rgba
     values, with each component as 1 byte each. In memory this should be:
@@ -110,10 +110,10 @@ void CompressMasked( u8 const* rgba, int mask, void* block, int flags, float* me
 
 /*! @brief Compresses a 4x4 block of pixels.
 
-    @param rgba        The rgba values of the 16 source pixels.
-    @param block    Storage for the compressed DXT block.
-    @param flags    Compression flags.
-    @param metric    An optional perceptual metric.
+    @param rgba   The rgba values of the 16 source pixels.
+    @param block  Storage for the compressed DXT block.
+    @param flags  Compression flags.
+    @param metric An optional perceptual metric.
 
     The source pixels should be presented as a contiguous array of 16 rgba
     values, with each component as 1 byte each. In memory this should be:
@@ -154,9 +154,9 @@ inline void Compress( u8 const* rgba, void* block, int flags, float* metric = 0 
 
 /*! @brief Decompresses a 4x4 block of pixels.
 
-    @param rgba        Storage for the 16 decompressed pixels.
-    @param block    The compressed DXT block.
-    @param flags    Compression flags.
+    @param rgba  Storage for the 16 decompressed pixels.
+    @param block The compressed DXT block.
+    @param flags Compression flags.
 
     The decompressed pixels will be written as a contiguous array of 16 rgba
     values, with each component as 1 byte each. In memory this is:
@@ -173,9 +173,9 @@ void Decompress( u8* rgba, void const* block, int flags );
 
 /*! @brief Computes the amount of compressed storage required.
 
-    @param width    The width of the image.
-    @param height    The height of the image.
-    @param flags    Compression flags.
+    @param width  The width of the image.
+    @param height The height of the image.
+    @param flags  Compression flags.
 
     The flags parameter should specify either kDxt1, kDxt3 or kDxt5 compression,
     however, DXT1 will be used by default if none is specified. All other flags
@@ -191,12 +191,12 @@ int GetStorageRequirements( int width, int height, int flags );
 
 /*! @brief Compresses an image in memory.
 
-    @param rgba        The pixels of the source.
-    @param width    The width of the source image.
-    @param height    The height of the source image.
-    @param blocks    Storage for the compressed output.
-    @param flags    Compression flags.
-    @param metric    An optional perceptual metric.
+    @param rgba   The pixels of the source.
+    @param width  The width of the source image.
+    @param height The height of the source image.
+    @param blocks Storage for the compressed output.
+    @param flags  Compression flags.
+    @param metric An optional perceptual metric.
 
     The source pixels should be presented as a contiguous array of width*height
     rgba values, with each component as 1 byte each. In memory this should be:
@@ -236,11 +236,11 @@ void CompressImage( u8 const* rgba, int width, int height, void* blocks, int fla
 
 /*! @brief Decompresses an image in memory.
 
-    @param rgba        Storage for the decompressed pixels.
-    @param width    The width of the source image.
-    @param height    The height of the source image.
-    @param blocks    The compressed DXT blocks.
-    @param flags    Compression flags.
+    @param rgba   Storage for the decompressed pixels.
+    @param width  The width of the source image.
+    @param height The height of the source image.
+    @param blocks The compressed DXT blocks.
+    @param flags  Compression flags.
 
     The decompressed pixels will be written as a contiguous array of width*height
     16 rgba values, with each component as 1 byte each. In memory this is:
