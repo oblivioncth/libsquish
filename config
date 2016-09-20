@@ -1,4 +1,4 @@
-# config file used for the GNUmakefile only
+# config file for GNUmake
 
 # define to 0 to not build shared library
 USE_SHARED ?= 1
@@ -19,6 +19,12 @@ ifeq ($(USE_SSE),1)
    CPPFLAGS += -DSQUISH_USE_SSE=2
    CXXFLAGS += -msse
 endif
+
+# install options
+INSTALL = install
+INSTALL_FILE      = $(INSTALL) -p -o root -g root     -m 644
+INSTALL_PROGRAM   = $(INSTALL) -p -o root -g root     -m 755
+INSTALL_DIRECTORY = $(INSTALL) -d -p -o root -g root  -m 755
 
 # where should we install to
 INSTALL_DIR ?= /usr/local
