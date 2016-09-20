@@ -23,7 +23,8 @@
 
    -------------------------------------------------------------------------- */
 
-#include <squish.h>
+#include <string.h>
+#include "squish.h"
 #include "colourset.h"
 #include "maths.h"
 #include "rangefit.h"
@@ -285,11 +286,6 @@ static double ErrorSq(double x, double y)
 
 static void ComputeBlockWMSE(u8 const *original, u8 const *compressed, unsigned int w, unsigned int h, double &cmse, double &amse)
 {
-    ComputeMSE(rgba, width, height, width*4, dxt, flags, colourMSE, alphaMSE);
-}
-
-void ComputeMSE( u8 const *rgba, int width, int height, int pitch, u8 const *dxt, int flags, double &colourMSE, double &alphaMSE )
-{
     // Computes the MSE for the block and weights it by the variance of the original block.
     // If the variance of the original block is less than 4 (i.e. a standard deviation of 1 per channel)
     // then the block is close to being a single colour. Quantisation errors in single colour blocks
@@ -339,6 +335,11 @@ void ComputeMSE( u8 const *rgba, int width, int height, int pitch, u8 const *dxt
 }
 
 void ComputeMSE( u8 const *rgba, int width, int height, u8 const *dxt, int flags, double &colourMSE, double &alphaMSE )
+{
+    ComputeMSE(rgba, width, height, width*4, dxt, flags, colourMSE, alphaMSE);
+}
+
+void ComputeMSE( u8 const *rgba, int width, int height, int pitch, u8 const *dxt, int flags, double &colourMSE, double &alphaMSE )
 {
     // fix any bad flags
     flags = FixFlags( flags );
