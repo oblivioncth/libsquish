@@ -1,3 +1,8 @@
+1.14
+* backport BGRA support
+* backport BC4 and BC5 support
+* backport BlockMSE support
+
 1.11-1.13
 * added support for CMake and QMake (Stefan Roettger)
 * misc. minor changes on the build system (Stefan Roettger)
