@@ -18,7 +18,7 @@ else
    LIB = libsquish.a
 endif
 
-all: $(LIB)
+all: $(LIB) docs
 
 install: $(LIB)
 	install squish.h $(INSTALL_DIR)/include
@@ -36,11 +36,15 @@ else
 	ranlib $@
 endif
 
+docs: $(SRC)
+	doxygen
+
 tgz: clean
-	tar zcf libsquish-$(VER).tgz $(SRC) $(HDR) GNUmakefile config CMakeLists.txt CMakeModules libSquish.* README LICENSE ChangeLog Doxyfile extra
+	tar zcf libsquish-$(VER).tgz $(SRC) $(HDR) Makefile config CMakeLists.txt CMakeModules libSquish.* README LICENSE ChangeLog Doxyfile extra
 
 %.o: %.cpp
 	$(CXX) $(CPPFLAGS) -I. $(CXXFLAGS) -o $@ -c $<
 
 clean:
 	$(RM) $(OBJ) $(LIB) Makefile
+	$(RM) -rf docs
