@@ -1,6 +1,6 @@
 # config file for GNUmake
 
-# define to 0 to not build shared library
+# define to 0 to not install shared library
 USE_SHARED ?= 1
 
 # define to 1 to use Altivec instructions

@@ -10,21 +10,19 @@ HDR += config.h simd.h simd_float.h simd_sse.h simd_ve.h singlecolourlookup.inl
 
 OBJ = $(SRC:%.cpp=%.o)
 
-ifeq ($(USE_SHARED),1)
-   SOLIB = libsquish.so.$(SOVER)
-   LIB = $(SOLIB).0
-   CPPFLAGS += -fPIC
-else
-   LIB = libsquish.a
-endif
+SOLIB = libsquish.so.$(SOVER)
+LIB = $(SOLIB).0
+CPPFLAGS += -fPIC
+LIBA = libsquish.a
 
-all: $(LIB) docs libsquish.pc
+all: $(LIB) $(LIBA) docs libsquish.pc
 
-install: $(LIB) libsquish.pc
+install: $(LIB) $(LIBA) libsquish.pc
 	$(INSTALL_DIRECTORY) $(INSTALL_DIR)/include $(INSTALL_DIR)/lib
 	$(INSTALL_FILE) squish.h $(INSTALL_DIR)/include
-	$(INSTALL_FILE) $(LIB) $(INSTALL_DIR)/lib
+	$(INSTALL_FILE) $(LIBA) $(INSTALL_DIR)/lib
 ifeq ($(USE_SHARED),1)
+	$(INSTALL_FILE) $(LIB) $(INSTALL_DIR)/lib
 	ln -s $(LIB) $(INSTALL_DIR)/lib/$(SOLIB)
 	ln -s $(LIB) $(INSTALL_DIR)/lib/libsquish.so
 	$(INSTALL_DIRECTORY) $(INSTALL_DIR)/lib/pkgconfig
@@ -33,18 +31,18 @@ endif
 
 uninstall:
 	$(RM) $(INSTALL_DIR)/include/squish.h
-	$(RM) $(INSTALL_DIR)/lib/$(LIB)
+	$(RM) $(INSTALL_DIR)/lib/$(LIBA)
+	-$(RM) $(INSTALL_DIR)/lib/$(LIB)
 	-$(RM) $(INSTALL_DIR)/lib/$(SOLIB)
 	-$(RM) $(INSTALL_DIR)/lib/libsquish.so
 	-$(RM) $(INSTALL_DIR)/lib/pkgconfig/libsquish.pc
 
 $(LIB): $(OBJ)
-ifeq ($(USE_SHARED),1)
 	$(CXX) -shared -Wl,-soname,$(SOLIB) -o $@ $(OBJ)
-else
+
+$(LIBA): $(OBJ)
 	$(AR) cr $@ $?
 	ranlib $@
-endif
 
 docs: $(SRC) $(HDR)
 	@if [ -x "$(command -v doxygen)" ]; then doxygen; fi
@@ -59,5 +57,5 @@ tgz: clean
 	$(CXX) $(CPPFLAGS) -I. $(CXXFLAGS) -o $@ -c $<
 
 clean:
-	$(RM) $(OBJ) $(LIB) libsquish.pc
+	$(RM) $(OBJ) $(LIB) $(LIBA) libsquish.pc
 	$(RM) -rf docs
