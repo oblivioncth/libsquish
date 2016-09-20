@@ -4,7 +4,7 @@
 
     Permission is hereby granted, free of charge, to any person obtaining
     a copy of this software and associated documentation files (the
-    "Software"), to    deal in the Software without restriction, including
+    "Software"), to deal in the Software without restriction, including
     without limitation the rights to use, copy, modify, merge, publish,
     distribute, sublicense, and/or sell copies of the Software, and to
     permit persons to whom the Software is furnished to do so, subject to
@@ -47,17 +47,26 @@ enum
     //! Use DXT5 compression.
     kDxt5 = ( 1 << 2 ),
 
-    //! Use a very slow but very high quality colour compressor.
-    kColourIterativeClusterFit = ( 1 << 8 ),
+    //! Use BC4 compression.
+    kBc4 = ( 1 << 3 ),
+
+    //! Use BC5 compression.
+    kBc5 = ( 1 << 4 ),
 
     //! Use a slow but high quality colour compressor (the default).
-    kColourClusterFit = ( 1 << 3 ),
+    kColourClusterFit = ( 1 << 5 ),
 
     //! Use a fast but low quality colour compressor.
-    kColourRangeFit = ( 1 << 4 ),
+    kColourRangeFit = ( 1 << 6 ),
 
     //! Weight the colour by alpha during cluster fit (disabled by default).
     kWeightColourByAlpha = ( 1 << 7 )
+
+    //! Use a very slow but very high quality colour compressor.
+    kColourIterativeClusterFit = ( 1 << 8 ),
+
+    //! Source is BGRA rather than RGBA
+    kSourceBGRA = ( 1 << 9 ),
 };
 
 // -----------------------------------------------------------------------------
@@ -82,7 +91,7 @@ enum
     is in the CompressImage function to disable pixels outside the bounds of
     the image when the width or height is not divisible by 4.
 
-    The flags parameter should specify either kDxt1, kDxt3 or kDxt5 compression,
+    The flags parameter should specify kDxt1, kDxt3, kDxt5, kBc4, or kBc5 compression,
     however, DXT1 will be used by default if none is specified. When using DXT1
     compression, 8 bytes of storage are required for the compressed DXT block.
     DXT3 and DXT5 compression require 16 bytes of storage per block.
@@ -120,7 +129,7 @@ void CompressMasked( u8 const* rgba, int mask, void* block, int flags, float* me
 
         { r1, g1, b1, a1, .... , r16, g16, b16, a16 }
 
-    The flags parameter should specify either kDxt1, kDxt3 or kDxt5 compression,
+    The flags parameter should specify kDxt1, kDxt3, kDxt5, kBc4, or kBc5 compression,
     however, DXT1 will be used by default if none is specified. When using DXT1
     compression, 8 bytes of storage are required for the compressed DXT block.
     DXT3 and DXT5 compression require 16 bytes of storage per block.
@@ -163,7 +172,7 @@ inline void Compress( u8 const* rgba, void* block, int flags, float* metric = 0 
 
         { r1, g1, b1, a1, .... , r16, g16, b16, a16 }
 
-    The flags parameter should specify either kDxt1, kDxt3 or kDxt5 compression,
+    The flags parameter should specify kDxt1, kDxt3, kDxt5, kBc4, or kBc5 compression,
     however, DXT1 will be used by default if none is specified. All other flags
     are ignored.
 */
@@ -177,7 +186,7 @@ void Decompress( u8* rgba, void const* block, int flags );
     @param height The height of the image.
     @param flags  Compression flags.
 
-    The flags parameter should specify either kDxt1, kDxt3 or kDxt5 compression,
+    The flags parameter should specify kDxt1, kDxt3, kDxt5, kBc4, or kBc5 compression,
     however, DXT1 will be used by default if none is specified. All other flags
     are ignored.
 
@@ -194,6 +203,7 @@ int GetStorageRequirements( int width, int height, int flags );
     @param rgba   The pixels of the source.
     @param width  The width of the source image.
     @param height The height of the source image.
+    @param pitch  The pitch of the source image.
     @param blocks Storage for the compressed output.
     @param flags  Compression flags.
     @param metric An optional perceptual metric.
@@ -203,7 +213,7 @@ int GetStorageRequirements( int width, int height, int flags );
 
         { r1, g1, b1, a1, .... , rn, gn, bn, an } for n = width*height
 
-    The flags parameter should specify either kDxt1, kDxt3 or kDxt5 compression,
+    The flags parameter should specify kDxt1, kDxt3, kDxt5, kBc4, or kBc5 compression,
     however, DXT1 will be used by default if none is specified. When using DXT1
     compression, 8 bytes of storage are required for each compressed DXT block.
     DXT3 and DXT5 compression require 16 bytes of storage per block.
@@ -231,6 +241,7 @@ int GetStorageRequirements( int width, int height, int flags );
     to allocate for the compressed output.
 */
 void CompressImage( u8 const* rgba, int width, int height, void* blocks, int flags, float* metric = 0 );
+void CompressImage( u8 const* rgba, int width, int height, int pitch, void* blocks, int flags, float* metric = 0 );
 
 // -----------------------------------------------------------------------------
 
@@ -239,6 +250,7 @@ void CompressImage( u8 const* rgba, int width, int height, void* blocks, int fla
     @param rgba   Storage for the decompressed pixels.
     @param width  The width of the source image.
     @param height The height of the source image.
+    @param pitch  The pitch of the decompressed pixels.
     @param blocks The compressed DXT blocks.
     @param flags  Compression flags.
 
@@ -247,17 +259,42 @@ void CompressImage( u8 const* rgba, int width, int height, void* blocks, int fla
 
         { r1, g1, b1, a1, .... , rn, gn, bn, an } for n = width*height
 
-    The flags parameter should specify either kDxt1, kDxt3 or kDxt5 compression,
+    The flags parameter should specify kDxt1, kDxt3, kDxt5, kBc4, or kBc5 compression,
     however, DXT1 will be used by default if none is specified. All other flags
     are ignored.
 
     Internally this function calls squish::Decompress for each block.
 */
 void DecompressImage( u8* rgba, int width, int height, void const* blocks, int flags );
+void DecompressImage( u8* rgba, int width, int height, int pitch, void const* blocks, int flags );
+
+// -----------------------------------------------------------------------------
+
+/*! @brief Computes MSE of an compressed image in memory.
+
+    @param rgba      The original image pixels.
+    @param width     The width of the source image.
+    @param height    The height of the source image.
+    @param pitch     The pitch of the source image.
+    @param dxt       The compressed dxt blocks
+    @param flags     Compression flags.
+    @param colourMSE The MSE of the colour values.
+    @param alphaMSE  The MSE of the alpha values.
+
+    The colour MSE and alpha MSE are computed across all pixels. The colour MSE is
+    averaged across all rgb values (i.e. colourMSE = sum sum_k ||dxt.k - rgba.k||/3)
+
+    The flags parameter should specify kDxt1, kDxt3, kDxt5, kBc4, or kBc5 compression,
+    however, DXT1 will be used by default if none is specified. All other flags
+    are ignored.
+
+    Internally this function calls squish::Decompress for each block.
+*/
+void ComputeMSE(u8 const *rgba, int width, int height, u8 const *dxt, int flags, double &colourMSE, double &alphaMSE);
+void ComputeMSE(u8 const *rgba, int width, int height, int pitch, u8 const *dxt, int flags, double &colourMSE, double &alphaMSE);
 
 // -----------------------------------------------------------------------------
 
 } // namespace squish
 
 #endif // ndef SQUISH_H
-
