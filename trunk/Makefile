@@ -38,7 +38,7 @@ uninstall:
 	-$(RM) $(INSTALL_DIR)/lib/pkgconfig/libsquish.pc
 
 $(LIB): $(OBJ)
-	$(CXX) -shared -Wl,-soname,$(SOLIB) -o $@ $(OBJ)
+	$(CXX) $(LDFLAGS) -shared -Wl,-soname,$(SOLIB) -o $@ $(OBJ)
 
 $(LIBA): $(OBJ)
 	$(AR) cr $@ $?
