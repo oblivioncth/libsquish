@@ -15,6 +15,8 @@ LIB = $(SOLIB).0
 CPPFLAGS += -fPIC
 LIBA = libsquish.a
 
+.PHONY: all install uninstall docs tgz clean
+
 all: $(LIB) $(LIBA) docs libsquish.pc
 
 install: $(LIB) $(LIBA) libsquish.pc
