@@ -28,3 +28,4 @@ INSTALL_DIRECTORY = $(INSTALL) -d -p -o root -g root  -m 755
 
 # where should we install to
 INSTALL_DIR ?= /usr/local
+LIB_PATH ?= lib
