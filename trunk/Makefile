@@ -47,7 +47,7 @@ $(LIBA): $(OBJ)
 	ranlib $@
 
 docs: $(SRC) $(HDR)
-	@if [ -x `command -v doxygen` ]; then doxygen; fi
+	@if [ -x "`command -v doxygen`" ]; then doxygen; fi
 
 libsquish.pc: libsquish.pc.in
 	@sed 's|@PREFIX@|$(PREFIX)|' $@.in > $@
