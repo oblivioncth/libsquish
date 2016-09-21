@@ -44,7 +44,7 @@ $(LIB): $(OBJ)
 
 $(LIBA): $(OBJ)
 	$(AR) cr $@ $?
-	ranlib $@
+	@if [ -x "`command -v ranlib`" ]; then ranlib $@; fi
 
 docs: $(SRC) $(HDR)
 	@if [ -x "`command -v doxygen`" ]; then doxygen; fi
@@ -60,4 +60,4 @@ tgz: clean
 
 clean:
 	$(RM) $(OBJ) $(LIB) $(LIBA) libsquish.pc
-	$(RM) -rf docs
+	@-$(RM) -rf docs
