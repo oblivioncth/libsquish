@@ -46,7 +46,7 @@ endif
 
 $(LIBA): $(OBJ)
 	$(AR) cr $@ $?
-	@if [ -x "`command -v ranlib`" ]; then ranlib $@; fi
+	@ranlib $@
 
 docs: $(SRC) $(HDR)
 	@if [ -x "`command -v doxygen`" ]; then doxygen; fi
