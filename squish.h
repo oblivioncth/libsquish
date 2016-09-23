@@ -240,8 +240,8 @@ int GetStorageRequirements( int width, int height, int flags );
     squish::GetStorageRequirements can be called to compute the amount of memory
     to allocate for the compressed output.
 */
-void CompressImage( u8 const* rgba, int width, int height, void* blocks, int flags, float* metric = 0 );
 void CompressImage( u8 const* rgba, int width, int height, int pitch, void* blocks, int flags, float* metric = 0 );
+void CompressImage( u8 const* rgba, int width, int height, void* blocks, int flags, float* metric = 0 );
 
 // -----------------------------------------------------------------------------
 
@@ -265,8 +265,8 @@ void CompressImage( u8 const* rgba, int width, int height, int pitch, void* bloc
 
     Internally this function calls squish::Decompress for each block.
 */
-void DecompressImage( u8* rgba, int width, int height, void const* blocks, int flags );
 void DecompressImage( u8* rgba, int width, int height, int pitch, void const* blocks, int flags );
+void DecompressImage( u8* rgba, int width, int height, void const* blocks, int flags );
 
 // -----------------------------------------------------------------------------
 
@@ -290,8 +290,8 @@ void DecompressImage( u8* rgba, int width, int height, int pitch, void const* bl
 
     Internally this function calls squish::Decompress for each block.
 */
-void ComputeMSE(u8 const *rgba, int width, int height, u8 const *dxt, int flags, double &colourMSE, double &alphaMSE);
 void ComputeMSE(u8 const *rgba, int width, int height, int pitch, u8 const *dxt, int flags, double &colourMSE, double &alphaMSE);
+void ComputeMSE(u8 const *rgba, int width, int height, u8 const *dxt, int flags, double &colourMSE, double &alphaMSE);
 
 // -----------------------------------------------------------------------------
 

@@ -23,7 +23,7 @@ install: $(LIB) $(LIBA) libsquish.pc
 	$(INSTALL_DIRECTORY) $(INSTALL_DIR)/include $(INSTALL_DIR)/$(LIB_PATH)
 	$(INSTALL_FILE) squish.h $(INSTALL_DIR)/include
 	$(INSTALL_FILE) $(LIBA) $(INSTALL_DIR)/$(LIB_PATH)
-ifeq ($(USE_SHARED),1)
+ifneq ($(USE_SHARED),0)
 	$(INSTALL_FILE) $(LIB) $(INSTALL_DIR)/$(LIB_PATH)
 	ln -s $(LIB) $(INSTALL_DIR)/$(LIB_PATH)/$(SOLIB)
 	ln -s $(LIB) $(INSTALL_DIR)/$(LIB_PATH)/libsquish.so
@@ -40,7 +40,9 @@ uninstall:
 	-$(RM) $(INSTALL_DIR)/$(LIB_PATH)/pkgconfig/libsquish.pc
 
 $(LIB): $(OBJ)
+ifneq ($(USE_SHARED),0)
 	$(CXX) $(LDFLAGS) -shared -Wl,-soname,$(SOLIB) -o $@ $(OBJ)
+endif
 
 $(LIBA): $(OBJ)
 	$(AR) cr $@ $?
