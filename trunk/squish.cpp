@@ -172,11 +172,6 @@ void CopyRGBA( u8 const* source, u8* dest, int flags )
     }
 }
 
-void CompressImage( u8 const* rgba, int width, int height, void* blocks, int flags, float* metric )
-{
-    CompressImage(rgba, width, height, width*4, blocks, flags, metric);
-}
-
 void CompressImage( u8 const* rgba, int width, int height, int pitch, void* blocks, int flags, float* metric )
 {
     // fix any bad flags
@@ -227,9 +222,9 @@ void CompressImage( u8 const* rgba, int width, int height, int pitch, void* bloc
     }
 }
 
-void DecompressImage( u8* rgba, int width, int height, void const* blocks, int flags )
+void CompressImage( u8 const* rgba, int width, int height, void* blocks, int flags, float* metric )
 {
-    DecompressImage( rgba, width, height, width*4, blocks, flags );
+    CompressImage(rgba, width, height, width*4, blocks, flags, metric);
 }
 
 void DecompressImage( u8* rgba, int width, int height, int pitch, void const* blocks, int flags )
@@ -279,9 +274,14 @@ void DecompressImage( u8* rgba, int width, int height, int pitch, void const* bl
     }
 }
 
+void DecompressImage( u8* rgba, int width, int height, void const* blocks, int flags )
+{
+    DecompressImage( rgba, width, height, width*4, blocks, flags );
+}
+
 static double ErrorSq(double x, double y)
 {
-	return (x - y) * (x - y);
+    return (x - y) * (x - y);
 }
 
 static void ComputeBlockWMSE(u8 const *original, u8 const *compressed, unsigned int w, unsigned int h, double &cmse, double &amse)
@@ -332,11 +332,6 @@ static void ComputeBlockWMSE(u8 const *original, u8 const *compressed, unsigned 
         amse *= 5;
         cmse *= 5;
     }
-}
-
-void ComputeMSE( u8 const *rgba, int width, int height, u8 const *dxt, int flags, double &colourMSE, double &alphaMSE )
-{
-    ComputeMSE(rgba, width, height, width*4, dxt, flags, colourMSE, alphaMSE);
 }
 
 void ComputeMSE( u8 const *rgba, int width, int height, int pitch, u8 const *dxt, int flags, double &colourMSE, double &alphaMSE )
@@ -390,6 +385,11 @@ void ComputeMSE( u8 const *rgba, int width, int height, int pitch, u8 const *dxt
     }
     colourMSE /= (width * height * 3);
     alphaMSE /= (width * height);
+}
+
+void ComputeMSE( u8 const *rgba, int width, int height, u8 const *dxt, int flags, double &colourMSE, double &alphaMSE )
+{
+    ComputeMSE(rgba, width, height, width*4, dxt, flags, colourMSE, alphaMSE);
 }
 
 } // namespace squish
