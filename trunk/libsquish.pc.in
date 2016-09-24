@@ -1,6 +1,6 @@
 prefix=@PREFIX@
 exec_prefix=${prefix}
-libdir=${prefix}/lib
+libdir=${prefix}/@LIB_PATH@
 sharedlibdir=${libdir}
 includedir=${prefix}/include
 
