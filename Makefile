@@ -55,7 +55,7 @@ libsquish.pc: libsquish.pc.in
 	@sed 's|@PREFIX@|$(PREFIX)|;s|@LIB_PATH@|$(LIB_PATH)|' $@.in > $@
 
 tgz: clean
-	tar zcf libsquish-$(VER).tgz $(SRC) $(HDR) Makefile config CMakeLists.txt CMakeModules libSquish.* README LICENSE ChangeLog Doxyfile libsquish.pc.in extra
+	tar zcf libsquish-$(VER).tgz $(SRC) $(HDR) Makefile config CMakeLists.txt CMakeModules libSquish.* README LICENSE ChangeLog Doxyfile libsquish.pc.in extra/*.cpp
 
 %.o: %.cpp
 	$(CXX) $(CPPFLAGS) -I. $(CXXFLAGS) -o $@ -c $<
