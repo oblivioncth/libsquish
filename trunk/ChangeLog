@@ -1,5 +1,6 @@
 1.15
 * parallel compression using openmp with cmake (Marian Krivos / Stefan Roettger)
+* parallel decompression using openmp with cmake (Stefan Roettger)
 
 1.14
 * backport BGRA support
