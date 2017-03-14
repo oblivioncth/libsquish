@@ -1,15 +1,19 @@
 # cmake build file for squish
-# by Stefan Roettger (stefan@stereofx.org)
+# by Stefan Roettger (snroettg@gmail.com)
 # updated by Simon Brown (si@sjbrown.co.uk)
 
 # features:
+#   uses -fopenmp when available
+#    use BUILD_SQUISH_WITH_OPENMP to override
 #   Xcode: builds universal binaries, uses SSE2 on i386 and Altivec on ppc
 #   Unix and VS: SSE2 support is enabled by default
-#   use BUILD_SQUISH_WITH_SSE2 and BUILD_SQUISH_WITH_ALTIVEC to override
+#    use BUILD_SQUISH_WITH_SSE2 and BUILD_SQUISH_WITH_ALTIVEC to override
 
 PROJECT(squish)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
+
+OPTION(BUILD_SQUISH_WITH_OPENMP "Build with OpenMP." ON)
 
 OPTION(BUILD_SQUISH_WITH_SSE2 "Build with SSE2." ON)
 OPTION(BUILD_SQUISH_WITH_ALTIVEC "Build with Altivec." OFF)
@@ -17,6 +21,15 @@ OPTION(BUILD_SQUISH_WITH_ALTIVEC "Build with Altivec." OFF)
 OPTION(BUILD_SHARED_LIBS "Build shared libraries." OFF)
 
 OPTION(BUILD_SQUISH_EXTRA "Build extra source code." OFF)
+
+IF (BUILD_SQUISH_WITH_OPENMP)
+   FIND_PACKAGE(OPENMP)
+   IF (OPENMP_FOUND)
+       SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+       SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+       ADD_DEFINITIONS(-DSQUISH_USE_OPENMP)
+   ENDIF()
+ENDIF()
 
 IF (CMAKE_GENERATOR STREQUAL "Xcode")
     SET(CMAKE_OSX_ARCHITECTURES "i386;ppc")
