@@ -1,6 +1,6 @@
 include config
 
-VER = 1.14
+VER = 1.15
 SOVER = 0
 
 SRC = alpha.cpp clusterfit.cpp colourblock.cpp colourfit.cpp colourset.cpp maths.cpp rangefit.cpp singlecolourfit.cpp squish.cpp

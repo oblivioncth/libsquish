@@ -182,6 +182,9 @@ void CompressImage( u8 const* rgba, int width, int height, int pitch, void* bloc
     int bytesPerBlock = ( ( flags & ( kDxt1 | kBc4 ) ) != 0 ) ? 8 : 16;
 
     // loop over blocks
+#ifdef SQUISH_USE_OPENMP
+#   pragma omp parallel for
+#endif
     for( int y = 0; y < height; y += 4 )
     {
         for( int x = 0; x < width; x += 4 )
