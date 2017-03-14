@@ -27,3 +27,6 @@ CONFIG(debug, debug|release) {
    win32:RCC_DIR = $$join(RCC_DIR,,,d)
    win32:UI_DIR = $$join(UI_DIR,,,d)
 }
+
+unix:QMAKE_CXXFLAGS += -DSQUISH_USE_OPENMP -fopenmp
+
