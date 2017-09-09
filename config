@@ -17,6 +17,7 @@ CXXFLAGS ?= -O2 -Wall
 ifeq ($(USE_OPENMP),1)
    CPPFLAGS += -DSQUISH_USE_OPENMP
    CXXFLAGS += -fopenmp
+   LDFLAGS += -fopenmp
 endif
 ifeq ($(USE_ALTIVEC),1)
    CPPFLAGS += -DSQUISH_USE_ALTIVEC=1
