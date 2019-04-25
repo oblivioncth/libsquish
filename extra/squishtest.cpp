@@ -83,8 +83,8 @@ void TestOneColour( int flags )
             double rms = std::sqrt( rm );
 
             // accumulate stats
-            min = std::min( min, rms );
-            max = std::max( max, rms );
+            if (rms < min) min = rms;
+            if (rms > max) max = rms;
             avg += rm;
             ++counter;
         }
@@ -133,8 +133,8 @@ void TestOneColourRandom( int flags )
         double rms = std::sqrt( rm );
 
         // accumulate stats
-        min = std::min( min, rms );
-        max = std::max( max, rms );
+        if (rms < min) min = rms;
+        if (rms > max) max = rms;
         avg += rm;
         ++counter;
     }
@@ -178,8 +178,8 @@ void TestTwoColour( int flags )
                 double rms = std::sqrt( rm );
 
                 // accumulate stats
-                min = std::min( min, rms );
-                max = std::max( max, rms );
+                if (rms < min) min = rms;
+                if (rms > max) max = rms;
                 avg += rm;
                 ++counter;
             }
