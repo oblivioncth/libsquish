@@ -8,8 +8,10 @@ preserved in its entirety.
 BUILDING AND INSTALLING THE LIBRARY
 -----------------------------------
 
-The preferred way to install the library on Unix/Mac (and Windows) is via cmake:
+The preferred way to install the library on Unix and Mac is via cmake:
  cmake . && make && sudo make install
+
+On Windows use the CMake GUI to build the library.
 
 REPORTING BUGS OR FEATURE REQUESTS
 ----------------------------------
