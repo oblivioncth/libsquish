@@ -23,7 +23,7 @@ ob_standard_project_setup()
 option(SQUISH_USE_OPENMP "Build with OpenMP." ON)
 option(SQUISH_USE_SSE2 "Build with SSE2." ON)
 option(SQUISH_USE_ALTIVEC "Build with Altivec." OFF)
-option(SQUISH_BUILD_EXTRA "Build extra source code." OFF)
+option(SQUISH_EXTRAS "Build extra tools." OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries." OFF) # Redundant due to OB, but explicit
 
 # C++
@@ -42,6 +42,19 @@ set(LIB_TARGET_NAME ${PROJECT_NAMESPACE_LC}_${PROJECT_NAMESPACE_LC})
 set(LIB_ALIAS_NAME ${PROJECT_NAMESPACE})
 add_subdirectory(lib)
 
+if(SQUISH_EXTRAS)
+    set(GEN_TARGET_NAME ${PROJECT_NAMESPACE_LC}_gen)
+    set(GEN_ALIAS_NAME Generator)
+    add_subdirectory(gen)
+
+    find_package(PNG)
+    if(PNG_FOUND)
+        set(PNG_TARGET_NAME ${PROJECT_NAMESPACE_LC}_png)
+        set(PNG_ALIAS_NAME Png)
+        add_subdirectory(png)
+    endif()
+endif()
+
 #--------------------Package Config-----------------------
 
 ob_standard_project_package_config(
@@ -49,6 +62,8 @@ ob_standard_project_package_config(
     CONFIG STANDARD
         TARGET_CONFIGS
             TARGET "${PROJECT_NAMESPACE}::${LIB_ALIAS_NAME}" COMPONENT "${LIB_ALIAS_NAME}" DEFAULT
+            TARGET "${PROJECT_NAMESPACE}::${GEN_ALIAS_NAME}" COMPONENT "${GEN_ALIAS_NAME}" OPTIONAL
+            TARGET "${PROJECT_NAMESPACE}::${PNG_ALIAS_NAME}" COMPONENT "${PNG_ALIAS_NAME}" OPTIONAL
 )
 
 #================= Install ==========================
