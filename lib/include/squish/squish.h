@@ -26,7 +26,7 @@
 #ifndef SQUISH_H
 #define SQUISH_H
 
-#include "squish_export.h"
+#include "squish/squish_export.h"
 
 //! All squish API functions live in this namespace.
 namespace squish {

@@ -26,7 +26,7 @@
 #ifndef SQUISH_COLOURFIT_H
 #define SQUISH_COLOURFIT_H
 
-#include "squish.h"
+#include "squish/squish.h"
 #include "maths.h"
 
 #include <climits>

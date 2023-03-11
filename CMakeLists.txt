@@ -13,10 +13,49 @@ project(Squish
 
 # Get helper scripts
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchOBCMake.cmake)
-fetch_ob_cmake("af237ed1688f7854943f58a61737f011e4df9ea4")
+fetch_ob_cmake("87174008db1a574e06b77911c292574ec9f5da08")
 
 # Initialize project according to standard rules
 include(OB/Project)
 ob_standard_project_setup()
 
+# Configuration options
+option(SQUISH_USE_OPENMP "Build with OpenMP." ON)
+option(SQUISH_USE_SSE2 "Build with SSE2." ON)
+option(SQUISH_USE_ALTIVEC "Build with Altivec." OFF)
+option(SQUISH_BUILD_EXTRA "Build extra source code." OFF)
+option(BUILD_SHARED_LIBS "Build shared libraries." OFF) # Redundant due to OB, but explicit
 
+# C++
+set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+#================= Build =========================
+
+# Import OpenMP
+if(SQUISH_USE_OPENMP)
+    find_package(OpenMP COMPONENTS C CXX)
+endif()
+
+# Process Targets
+set(LIB_TARGET_NAME ${PROJECT_NAMESPACE_LC}_${PROJECT_NAMESPACE_LC})
+set(LIB_ALIAS_NAME ${PROJECT_NAMESPACE})
+add_subdirectory(lib)
+
+#--------------------Package Config-----------------------
+
+ob_standard_project_package_config(
+    COMPATIBILITY "SameMajorVersion"
+    CONFIG STANDARD
+        TARGET_CONFIGS
+            TARGET "${PROJECT_NAMESPACE}::${LIB_ALIAS_NAME}" COMPONENT "${LIB_ALIAS_NAME}" DEFAULT
+)
+
+#================= Install ==========================
+
+ob_standard_project_misc_install()
+
+#====================== CPack ==============================
+
+include(OB/Packaging)
+ob_standard_project_package(VENDOR "oblivioncth")
