@@ -252,6 +252,9 @@ SQUISH_EXPORT int GetStorageRequirements( int width, int height, int flags );
     gamma value may be more suitable.
 */
 SQUISH_EXPORT void CompressImage( u8 const* rgba, int width, int height, int pitch, void* blocks, int flags, float* metric = 0 );
+
+/*! @overload
+ */
 SQUISH_EXPORT void CompressImage( u8 const* rgba, int width, int height, void* blocks, int flags, float* metric = 0 );
 
 // -----------------------------------------------------------------------------
@@ -277,6 +280,9 @@ SQUISH_EXPORT void CompressImage( u8 const* rgba, int width, int height, void* b
     Internally this function calls squish::Decompress for each block.
 */
 SQUISH_EXPORT void DecompressImage( u8* rgba, int width, int height, int pitch, void const* blocks, int flags );
+
+/*! @overload
+ */
 SQUISH_EXPORT void DecompressImage( u8* rgba, int width, int height, void const* blocks, int flags );
 
 // -----------------------------------------------------------------------------
@@ -302,6 +308,9 @@ SQUISH_EXPORT void DecompressImage( u8* rgba, int width, int height, void const*
     Internally this function calls squish::Decompress for each block.
 */
 SQUISH_EXPORT void ComputeMSE(u8 const *rgba, int width, int height, int pitch, u8 const *dxt, int flags, double &colourMSE, double &alphaMSE);
+
+/*! @overload
+ */
 SQUISH_EXPORT void ComputeMSE(u8 const *rgba, int width, int height, u8 const *dxt, int flags, double &colourMSE, double &alphaMSE);
 
 // -----------------------------------------------------------------------------
