@@ -1,0 +1,39 @@
+html {
+	--side-nav-fixed-width: 340px;
+    --primary-color: #CC6428;
+    --primary-dark-color: #7A4E33;
+    --primary-light-color: #E29F6F;
+}
+
+html.dark-mode {
+    color-scheme: dark;
+
+    --primary-color: #2BAAC6;
+    --primary-dark-color: #4FACC1;
+    --primary-light-color: #3A7F91;
+}
+
+.github-corner svg {
+    fill: var(--primary-light-color);
+    color: var(--page-background-color);
+    width: 72px;
+    height: 72px;
+}
+
+#projectnumber {
+	margin-right: 22px;
+}
+
+@media screen and (max-width: 767px) {
+    .github-corner svg {
+        width: 50px;
+        height: 50px;
+    }
+    #projectnumber {
+        margin-right: 22px;
+    }
+}
+
+#projectnumber {
+        margin-left: 5%;
+}

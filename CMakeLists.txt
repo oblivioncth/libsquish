@@ -1,3 +1,9 @@
+# CMake build for libsquish
+#
+# Original library by Simon Brown (si@sjbrown.co.uk)
+# Original CMake implementation by Stefan Roettger (snroettg@gmail.com)
+# Current CMake implementation by Christian Heimlich (chris@pcserenity.com)
+
 #================= Project Setup ==========================
 
 # CMake
@@ -13,17 +19,21 @@ project(Squish
 
 # Get helper scripts
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchOBCMake.cmake)
-fetch_ob_cmake("87174008db1a574e06b77911c292574ec9f5da08")
+fetch_ob_cmake("aa228b4724de8380ebf4f1db15491b37ad598fb7")
 
 # Initialize project according to standard rules
 include(OB/Project)
 ob_standard_project_setup()
+
+# Additional project variables
+set(PROJECT_FORMAL_NAME "libsquish")
 
 # Configuration options
 option(SQUISH_USE_OPENMP "Build with OpenMP." ON)
 option(SQUISH_USE_SSE2 "Build with SSE2." ON)
 option(SQUISH_USE_ALTIVEC "Build with Altivec." OFF)
 option(SQUISH_EXTRAS "Build extra tools." OFF)
+option(SQUISH_DOCS "Build the squish documentation." OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries." OFF) # Redundant due to OB, but explicit
 
 # C++
@@ -40,7 +50,8 @@ endif()
 # Process Targets
 set(LIB_TARGET_NAME ${PROJECT_NAMESPACE_LC}_${PROJECT_NAMESPACE_LC})
 set(LIB_ALIAS_NAME ${PROJECT_NAMESPACE})
-add_subdirectory(lib)
+set(LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/lib")
+add_subdirectory("${LIB_PATH}")
 
 if(SQUISH_EXTRAS)
     set(GEN_TARGET_NAME ${PROJECT_NAMESPACE_LC}_gen)
@@ -53,6 +64,11 @@ if(SQUISH_EXTRAS)
         set(PNG_ALIAS_NAME Png)
         add_subdirectory(png)
     endif()
+endif()
+
+if(SQUISH_DOCS)
+    set(DOC_TARGET_NAME ${PROJECT_NAMESPACE_LC}_docs)
+    add_subdirectory(doc)
 endif()
 
 #--------------------Package Config-----------------------
