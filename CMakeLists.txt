@@ -19,21 +19,20 @@ project(Squish
 
 # Get helper scripts
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchOBCMake.cmake)
-fetch_ob_cmake("aa228b4724de8380ebf4f1db15491b37ad598fb7")
+fetch_ob_cmake("5b52f99a9ed0f7a535e29d2d7c74d6c629e9b1cd")
 
 # Initialize project according to standard rules
 include(OB/Project)
-ob_standard_project_setup()
-
-# Additional project variables
-set(PROJECT_FORMAL_NAME "libsquish")
+ob_standard_project_setup(
+    NAMESPACE "libsquish"
+)
 
 # Configuration options
-option(SQUISH_USE_OPENMP "Build with OpenMP." ON)
-option(SQUISH_USE_SSE2 "Build with SSE2." ON)
-option(SQUISH_USE_ALTIVEC "Build with Altivec." OFF)
-option(SQUISH_EXTRAS "Build extra tools." OFF)
-option(SQUISH_DOCS "Build the squish documentation." OFF)
+option(LIBSQUISH_USE_OPENMP "Build with OpenMP." ON)
+option(LIBSQUISH_USE_SSE2 "Build with SSE2." ON)
+option(LIBSQUISH_USE_ALTIVEC "Build with Altivec." OFF)
+option(LIBSQUISH_EXTRAS "Build extra tools." OFF)
+option(LIBSQUISH_DOCS "Build the squish documentation." OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries." OFF) # Redundant due to OB, but explicit
 
 # C++
@@ -43,17 +42,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #================= Build =========================
 
 # Import OpenMP
-if(SQUISH_USE_OPENMP)
+if(LIBSQUISH_USE_OPENMP)
     find_package(OpenMP COMPONENTS C CXX)
 endif()
 
 # Process Targets
-set(LIB_TARGET_NAME ${PROJECT_NAMESPACE_LC}_${PROJECT_NAMESPACE_LC})
-set(LIB_ALIAS_NAME ${PROJECT_NAMESPACE})
+set(LIB_TARGET_NAME ${PROJECT_NAMESPACE_LC}_${PROJECT_NAME_LC})
+set(LIB_ALIAS_NAME ${PROJECT_NAME})
 set(LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 add_subdirectory("${LIB_PATH}")
 
-if(SQUISH_EXTRAS)
+if(LIBSQUISH_EXTRAS)
     set(GEN_TARGET_NAME ${PROJECT_NAMESPACE_LC}_gen)
     set(GEN_ALIAS_NAME Generator)
     add_subdirectory(gen)
@@ -66,7 +65,7 @@ if(SQUISH_EXTRAS)
     endif()
 endif()
 
-if(SQUISH_DOCS)
+if(LIBSQUISH_DOCS)
     set(DOC_TARGET_NAME ${PROJECT_NAMESPACE_LC}_docs)
     add_subdirectory(doc)
 endif()

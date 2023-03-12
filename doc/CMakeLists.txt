@@ -9,7 +9,7 @@ set(DOXYGEN_HTML_COLORSTYLE_GAMMA 80)
 # Setup documentation
 ob_standard_documentation(${DOC_TARGET_NAME}
     DOXY_VER 1.9.4
-    PROJ_NAME "${PROJECT_FORMAL_NAME}"
+    PROJ_NAME "${PROJECT_NAMESPACE}"
     INPUT_LIST
         "${LIB_PATH}/include"
 )

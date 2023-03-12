@@ -6,12 +6,12 @@ set(squish_links "")
 set(squish_defs "")
 set(squish_opts "")
 
-if(SQUISH_USE_OPENMP AND OpenMP_FOUND)
+if(LIBSQUISH_USE_OPENMP AND OpenMP_FOUND)
     list(APPEND squish_links "OpenMP::OpenMP_C OpenMP::OpenMP_CXX")
     list(APPEND squish_defs "SQUISH_USE_OPENMP")
 endif()
 
-if(SQUISH_USE_SSE2 AND CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
+if(LIBSQUISH_USE_SSE2 AND CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
     list(APPEND squish_defs "SQUISH_USE_SSE=2")
 
     if(MSVC AND system_bitness EQUAL 32)
@@ -21,7 +21,7 @@ if(SQUISH_USE_SSE2 AND CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD6
     endif()
 endif()
 
-if(SQUISH_USE_ALTIVEC AND CMAKE_SYSTEM_PROCESSOR STREQUAL "powerpc")
+if(LIBSQUISH_USE_ALTIVEC AND CMAKE_SYSTEM_PROCESSOR STREQUAL "powerpc")
     list(APPEND squish_defs "SQUISH_USE_ALTIVEC=1")
     list(APPEND squish_opts "-maltivec")
 endif()
@@ -32,8 +32,8 @@ ob_add_standard_library(${LIB_TARGET_NAME}
     NAMESPACE "${PROJECT_NAMESPACE}"
     ALIAS "${LIB_ALIAS_NAME}"
     EXPORT_HEADER
-        BASE_NAME "${PROJECT_NAMESPACE_UC}"
-        PATH "${PROJECT_NAMESPACE_LC}/${PROJECT_NAMESPACE_LC}_export.h"
+        BASE_NAME "${PROJECT_NAME_UC}"
+        PATH "${PROJECT_NAME_LC}/${PROJECT_NAME_LC}_export.h"
     HEADERS_PRIVATE
         alpha.h
         clusterfit.h
@@ -49,7 +49,7 @@ ob_add_standard_library(${LIB_TARGET_NAME}
         singlecolourfit.h
         singlecolourlookup.inl
     HEADERS_API
-        COMMON "${PROJECT_NAMESPACE_LC}"
+        COMMON "${PROJECT_NAME_LC}"
         FILES
             squish.h
     IMPLEMENTATION
