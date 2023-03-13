@@ -31,13 +31,40 @@
     possible 1 and 2-colour blocks of pixels.
 */
 
-#include <squish.h>
-#include <iostream>
+#include <squish/squish.h>
+#include <sstream>
 #include <cmath>
 #include <cfloat>
 #include <cstdlib>
 
+#include "libsquish_test_common.h"
+
 using namespace squish;
+
+struct ErrorStats
+{
+    double min = 0, max = 0, avg = 0;
+
+    bool operator==(const ErrorStats& other) const
+    {
+        return this->min == other.min &&
+               this->max == other.max &&
+               this->avg == other.avg;
+    }
+};
+
+inline std::string toString(const ErrorStats& es)
+{
+    std::ostringstream ss;
+    ss.precision(100);
+    ss << "{\n";
+    ss << "    min = " << es.min << "\n";
+    ss << "    max = " << es.max << "\n";
+    ss << "    avg = " << es.avg << "\n";
+    ss << "}\n";
+
+    return ss.str();
+}
 
 double GetColourError( u8 const* a, u8 const* b )
 {
@@ -54,7 +81,7 @@ double GetColourError( u8 const* a, u8 const* b )
     return error / 16.0;
 }
 
-void TestOneColour( int flags )
+ErrorStats TestOneColour( int flags )
 {
     u8 input[4*16];
     u8 output[4*16];
@@ -96,13 +123,10 @@ void TestOneColour( int flags )
 
     // finish stats
     avg = std::sqrt( avg/counter );
-
-    // show stats
-    std::cout << "one colour error (min, max, avg): "
-        << min << ", " << max << ", " << avg << std::endl;
+    return {min, max, avg};
 }
 
-void TestOneColourRandom( int flags )
+ErrorStats TestOneColourRandom( int flags )
 {
     u8 input[4*16];
     u8 output[4*16];
@@ -141,13 +165,10 @@ void TestOneColourRandom( int flags )
 
     // finish stats
     avg = std::sqrt( avg/counter );
-
-    // show stats
-    std::cout << "random one colour error (min, max, avg): "
-        << min << ", " << max << ", " << avg << std::endl;
+    return {min, max, avg};
 }
 
-void TestTwoColour( int flags )
+ErrorStats TestTwoColour( int flags )
 {
     u8 input[4*16];
     u8 output[4*16];
@@ -192,15 +213,19 @@ void TestTwoColour( int flags )
 
     // finish stats
     avg = std::sqrt( avg/counter );
-
-    // show stats
-    std::cout << "two colour error (min, max, avg): "
-        << min << ", " << max << ", " << avg << std::endl;
+    return {min, max, avg};
 }
 
 int main()
 {
-    TestOneColourRandom( kDxt1 | kColourRangeFit );
-    TestOneColour( kDxt1 );
-    TestTwoColour( kDxt1 );
+    LS_START("tst_color_error");
+
+    LS_COMPARE(TestOneColourRandom( kDxt1 | kColourRangeFit),
+               ErrorStats({0, 1.7320508075688772, 0.9402127418834527}));
+    LS_COMPARE(TestOneColour( kDxt1 ),
+               ErrorStats({0, 1, 0.478286702652959527792830840553506277501583099365234375}));
+    LS_COMPARE(TestTwoColour( kDxt1 ),
+               ErrorStats({0, 4.527692569068708650092958123423159122467041015625, 1.50027016248562716782544157467782497406005859375}));
+
+    LS_END();
 }

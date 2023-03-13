@@ -33,6 +33,7 @@ option(LIBSQUISH_USE_SSE2 "Build with SSE2." ON)
 option(LIBSQUISH_USE_ALTIVEC "Build with Altivec." OFF)
 option(LIBSQUISH_EXTRAS "Build extra tools." OFF)
 option(LIBSQUISH_DOCS "Build the squish documentation." OFF)
+option(LIBSQUISH_TEST "Build the squish tests." OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries." OFF) # Redundant due to OB, but explicit
 
 # C++
@@ -68,6 +69,13 @@ endif()
 if(LIBSQUISH_DOCS)
     set(DOC_TARGET_NAME ${PROJECT_NAMESPACE_LC}_docs)
     add_subdirectory(doc)
+endif()
+
+if(LIBSQUISH_TESTS)
+    enable_testing()
+    set(TESTS_TARGET_PREFIX ${PROJECT_NAMESPACE_LC})
+    set(TESTS_COMMON_ALIAS_TARGET ${PROJECT_NAMESPACE}::TestCommon)
+    add_subdirectory(tests)
 endif()
 
 #--------------------Package Config-----------------------
