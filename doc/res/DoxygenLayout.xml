@@ -3,19 +3,22 @@
   <!-- Navigation index tabs for HTML output -->
   <navindex>
     <tab type="mainpage" visible="yes" title=""/>
-    <tab type="user" url="https://github.com/oblivioncth/STARpp/releases" title="Downloads"/>
-    <tab type="pages" visible="yes" title="" intro=""/>
-    <tab type="modules" visible="yes" title="Components" intro="Here is a list of the components in STAR++:"/>
-      <tab type="namespacelist" visible="yes" title="Namespaces" intro=""/>
-    <tab type="namespaces" visible="no" title="">
+    <tab type="user" url="https://github.com/oblivioncth/libsquish/releases" title="Downloads"/>
+	<tab type="pages" visible="yes" title="" intro=""/>
+    <tab type="modules" visible="yes" title="Components" intro="Here is a list of the components in libsquish:"/>
+    <tab type="user" url="namespacesquish.html" title="Namespace: squish"/> -->
+	<!--
+    <tab type="namespacelist" visible="yes" title="Namespaces" intro=""/>
+	<tab type="namespaces" visible="no" title="">
       <tab type="namespacemembers" visible="no" title="" intro=""/>
     </tab>
+    -->
     <tab type="interfaces" visible="yes" title="">
       <tab type="interfacelist" visible="yes" title="" intro=""/>
       <tab type="interfaceindex" visible="$ALPHABETICAL_INDEX" title=""/> 
       <tab type="interfacehierarchy" visible="yes" title="" intro=""/>
     </tab>
-    <tab type="classes" visible="yes" title="">
+    <tab type="classes" visible="no" title="">
       <tab type="classlist" visible="yes" title="" intro=""/>
       <tab type="classindex" visible="$ALPHABETICAL_INDEX" title=""/> 
       <tab type="hierarchy" visible="yes" title="" intro=""/>
@@ -30,7 +33,7 @@
       <tab type="exceptionindex" visible="$ALPHABETICAL_INDEX" title=""/> 
       <tab type="exceptionhierarchy" visible="yes" title="" intro=""/>
     </tab>
-    <tab type="concepts" visible="yes" title=""/>
+	<tab type="concepts" visible="yes" title=""/>
     <tab type="files" visible="yes" title="">
       <tab type="filelist" visible="yes" title="" intro=""/>
       <tab type="globals" visible="yes" title="" intro=""/>

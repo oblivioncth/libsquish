@@ -26,6 +26,10 @@
 #ifndef SQUISH_H
 #define SQUISH_H
 
+/*! @file squish.h"
+    @brief The sole public header file of the squish library
+ */
+
 #include "squish/squish_export.h"
 
 //! All squish API functions live in this namespace.
