@@ -1,6 +1,7 @@
 /* -----------------------------------------------------------------------------
 
     Copyright (c) 2006 Simon Brown                          si@sjbrown.co.uk
+    Copyright (c) 2007 Ignacio Castano                   icastano@nvidia.com
 
     Permission is hereby granted, free of charge, to any person obtaining
     a copy of this software and associated documentation files (the
@@ -23,32 +24,38 @@
 
    -------------------------------------------------------------------------- */
 
-#ifndef SQUISH_RANGEFIT_H
-#define SQUISH_RANGEFIT_H
+#ifndef SQUISH_CLUSTERFIT_H
+#define SQUISH_CLUSTERFIT_H
 
-#include "squish.h"
-#include "colourfit.h"
+#include "squish/squish.h"
 #include "maths.h"
+#include "simd.h"
+#include "colourfit.h"
 
 namespace squish {
 
-class ColourSet;
-
-class RangeFit : public ColourFit
+class ClusterFit : public ColourFit
 {
 public:
-    RangeFit( ColourSet const* colours, int flags, float* metric );
+    ClusterFit( ColourSet const* colours, int flags, float* metric );
 
 private:
+    bool ConstructOrdering( Vec3 const& axis, int iteration );
+
     virtual void Compress3( void* block );
     virtual void Compress4( void* block );
 
-    Vec3 m_metric;
-    Vec3 m_start;
-    Vec3 m_end;
-    float m_besterror;
+    enum { kMaxIterations = 8 };
+
+    int m_iterationCount;
+    Vec3 m_principle;
+    u8 m_order[16*kMaxIterations];
+    Vec4 m_points_weights[16];
+    Vec4 m_xsum_wsum;
+    Vec4 m_metric;
+    Vec4 m_besterror;
 };
 
-} // squish
+} // namespace squish
 
-#endif // ndef SQUISH_RANGEFIT_H
+#endif // ndef SQUISH_CLUSTERFIT_H

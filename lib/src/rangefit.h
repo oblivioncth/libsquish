@@ -23,19 +23,32 @@
 
    -------------------------------------------------------------------------- */
 
-#ifndef SQUISH_ALPHA_H
-#define SQUISH_ALPHA_H
+#ifndef SQUISH_RANGEFIT_H
+#define SQUISH_RANGEFIT_H
 
-#include "squish.h"
+#include "squish/squish.h"
+#include "colourfit.h"
+#include "maths.h"
 
 namespace squish {
 
-void CompressAlphaDxt3( u8 const* rgba, int mask, void* block );
-void CompressAlphaDxt5( u8 const* rgba, int mask, void* block );
+class ColourSet;
 
-void DecompressAlphaDxt3( u8* rgba, void const* block );
-void DecompressAlphaDxt5( u8* rgba, void const* block );
+class RangeFit : public ColourFit
+{
+public:
+    RangeFit( ColourSet const* colours, int flags, float* metric );
 
-} // namespace squish
+private:
+    virtual void Compress3( void* block );
+    virtual void Compress4( void* block );
 
-#endif // ndef SQUISH_ALPHA_H
+    Vec3 m_metric;
+    Vec3 m_start;
+    Vec3 m_end;
+    float m_besterror;
+};
+
+} // squish
+
+#endif // ndef SQUISH_RANGEFIT_H

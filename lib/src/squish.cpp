@@ -24,7 +24,7 @@
    -------------------------------------------------------------------------- */
 
 #include <string.h>
-#include "squish.h"
+#include "squish/squish.h"
 #include "colourset.h"
 #include "maths.h"
 #include "rangefit.h"

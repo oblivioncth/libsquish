@@ -23,36 +23,19 @@
 
    -------------------------------------------------------------------------- */
 
-#ifndef SQUISH_SINGLECOLOURFIT_H
-#define SQUISH_SINGLECOLOURFIT_H
+#ifndef SQUISH_ALPHA_H
+#define SQUISH_ALPHA_H
 
-#include "squish.h"
-#include "colourfit.h"
+#include "squish/squish.h"
 
 namespace squish {
 
-class ColourSet;
-struct SingleColourLookup;
+void CompressAlphaDxt3( u8 const* rgba, int mask, void* block );
+void CompressAlphaDxt5( u8 const* rgba, int mask, void* block );
 
-class SingleColourFit : public ColourFit
-{
-public:
-    SingleColourFit( ColourSet const* colours, int flags );
-
-private:
-    virtual void Compress3( void* block );
-    virtual void Compress4( void* block );
-
-    void ComputeEndPoints( SingleColourLookup const* const* lookups );
-
-    u8 m_colour[3];
-    Vec3 m_start;
-    Vec3 m_end;
-    u8 m_index;
-    int m_error;
-    int m_besterror;
-};
+void DecompressAlphaDxt3( u8* rgba, void const* block );
+void DecompressAlphaDxt5( u8* rgba, void const* block );
 
 } // namespace squish
 
-#endif // ndef SQUISH_SINGLECOLOURFIT_H
+#endif // ndef SQUISH_ALPHA_H

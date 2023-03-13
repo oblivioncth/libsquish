@@ -23,36 +23,19 @@
 
    -------------------------------------------------------------------------- */
 
-#ifndef SQUISH_COLOURSET_H
-#define SQUISH_COLOURSET_H
+#ifndef SQUISH_COLOURBLOCK_H
+#define SQUISH_COLOURBLOCK_H
 
-#include "squish.h"
+#include "squish/squish.h"
 #include "maths.h"
 
 namespace squish {
 
-/*! @brief Represents a set of block colours
-*/
-class ColourSet
-{
-public:
-    ColourSet( u8 const* rgba, int mask, int flags );
+void WriteColourBlock3( Vec3::Arg start, Vec3::Arg end, u8 const* indices, void* block );
+void WriteColourBlock4( Vec3::Arg start, Vec3::Arg end, u8 const* indices, void* block );
 
-    int GetCount() const { return m_count; }
-    Vec3 const* GetPoints() const { return m_points; }
-    float const* GetWeights() const { return m_weights; }
-    bool IsTransparent() const { return m_transparent; }
+void DecompressColour( u8* rgba, void const* block, bool isDxt1 );
 
-    void RemapIndices( u8 const* source, u8* target ) const;
+} // namespace squish
 
-private:
-    int m_count;
-    Vec3 m_points[16];
-    float m_weights[16];
-    int m_remap[16];
-    bool m_transparent;
-};
-
-} // namespace sqish
-
-#endif // ndef SQUISH_COLOURSET_H
+#endif // ndef SQUISH_COLOURBLOCK_H

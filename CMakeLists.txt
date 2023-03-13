@@ -1,133 +1,99 @@
-# cmake build file for squish
-# by Stefan Roettger (snroettg@gmail.com)
-# updated by Simon Brown (si@sjbrown.co.uk)
+# CMake build for libsquish
+#
+# Original library by Simon Brown (si@sjbrown.co.uk)
+# Original CMake implementation by Stefan Roettger (snroettg@gmail.com)
+# Current CMake implementation by Christian Heimlich (chris@pcserenity.com)
 
-# features:
-#   uses -fopenmp when available
-#    use BUILD_SQUISH_WITH_OPENMP to override
-#   Xcode: builds universal binaries, uses SSE2 on i386 and Altivec on ppc
-#   Unix and VS: SSE2 support is enabled by default
-#    use BUILD_SQUISH_WITH_SSE2 and BUILD_SQUISH_WITH_ALTIVEC to override
+#================= Project Setup ==========================
 
-PROJECT(squish)
+# CMake
+cmake_minimum_required(VERSION 3.23.0...3.25.0)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
+# Project
+# NOTE: DON'T USE TRAILING ZEROS IN VERSIONS
+project(Squish
+    VERSION 1.15
+    LANGUAGES CXX
+    DESCRIPTION "S3TC/DXT compliant image compression"
+)
 
-OPTION(BUILD_SQUISH_WITH_OPENMP "Build with OpenMP." ON)
+# Get helper scripts
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchOBCMake.cmake)
+fetch_ob_cmake("2a76621f22be51b43c7e77af96c5e2216e5776e7")
 
-OPTION(BUILD_SQUISH_WITH_SSE2 "Build with SSE2." ON)
-OPTION(BUILD_SQUISH_WITH_ALTIVEC "Build with Altivec." OFF)
+# Initialize project according to standard rules
+include(OB/Project)
+ob_standard_project_setup(
+    NAMESPACE "libsquish"
+)
 
-OPTION(BUILD_SHARED_LIBS "Build shared libraries." OFF)
+# Configuration options
+option(LIBSQUISH_USE_OPENMP "Build with OpenMP." ON)
+option(LIBSQUISH_USE_SSE2 "Build with SSE2." ON)
+option(LIBSQUISH_USE_ALTIVEC "Build with Altivec." OFF)
+option(LIBSQUISH_EXTRAS "Build extra tools." OFF)
+option(LIBSQUISH_DOCS "Build the squish documentation." OFF)
+option(LIBSQUISH_TEST "Build the squish tests." OFF)
+option(BUILD_SHARED_LIBS "Build shared libraries." OFF) # Redundant due to OB, but explicit
 
-OPTION(BUILD_SQUISH_EXTRA "Build extra source code." OFF)
+# C++
+set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-IF (BUILD_SQUISH_WITH_OPENMP)
-   FIND_PACKAGE(OpenMP)
-   IF (OPENMP_FOUND)
-       SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-       SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-       ADD_DEFINITIONS(-DSQUISH_USE_OPENMP)
-   ENDIF()
-ENDIF()
+#================= Build =========================
 
-IF (CMAKE_GENERATOR STREQUAL "Xcode")
-    SET(CMAKE_OSX_ARCHITECTURES "i386;ppc")
-ELSE (CMAKE_GENERATOR STREQUAL "Xcode")
-    IF (BUILD_SQUISH_WITH_SSE2 AND NOT WIN32)
-        ADD_DEFINITIONS(-DSQUISH_USE_SSE=2 -msse2)
-    ENDIF (BUILD_SQUISH_WITH_SSE2 AND NOT WIN32)
-    IF (BUILD_SQUISH_WITH_ALTIVEC AND NOT WIN32)
-        ADD_DEFINITIONS(-DSQUISH_USE_ALTIVEC=1 -maltivec)
-    ENDIF (BUILD_SQUISH_WITH_ALTIVEC AND NOT WIN32)
-ENDIF (CMAKE_GENERATOR STREQUAL "Xcode")
+# Import OpenMP
+if(LIBSQUISH_USE_OPENMP)
+    find_package(OpenMP COMPONENTS C CXX)
+endif()
 
-SET(SQUISH_HDRS
-    squish.h
-    )
+# Process Targets
+set(LIB_TARGET_NAME ${PROJECT_NAMESPACE_LC}_${PROJECT_NAME_LC})
+set(LIB_ALIAS_NAME ${PROJECT_NAME})
+set(LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/lib")
+add_subdirectory("${LIB_PATH}")
 
-SET(SQUISH_SRCS
-    alpha.cpp
-    alpha.h
-    clusterfit.cpp
-    clusterfit.h
-    colourblock.cpp
-    colourblock.h
-    colourfit.cpp
-    colourfit.h
-    colourset.cpp
-    colourset.h
-    maths.cpp
-    maths.h
-    rangefit.cpp
-    rangefit.h
-    simd.h
-    simd_float.h
-    simd_sse.h
-    simd_ve.h
-    singlecolourfit.cpp
-    singlecolourfit.h
-    singlecolourlookup.inl
-    squish.cpp
-    )
+if(LIBSQUISH_EXTRAS)
+    set(GEN_TARGET_NAME ${PROJECT_NAMESPACE_LC}_gen)
+    set(GEN_ALIAS_NAME Generator)
+    add_subdirectory(gen)
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+    find_package(PNG)
+    if(PNG_FOUND)
+        set(PNG_TARGET_NAME ${PROJECT_NAMESPACE_LC}_png)
+        set(PNG_ALIAS_NAME Png)
+        add_subdirectory(png)
+    endif()
+endif()
 
-ADD_LIBRARY(squish ${SQUISH_SRCS} ${SQUISH_HDRS})
+if(LIBSQUISH_DOCS)
+    set(DOC_TARGET_NAME ${PROJECT_NAMESPACE_LC}_docs)
+    add_subdirectory(doc)
+endif()
 
-INCLUDE(GenerateExportHeader)
-GENERATE_EXPORT_HEADER(squish
-   EXPORT_FILE_NAME ${CMAKE_CURRENT_SOURCE_DIR}/squish_export.h
-   )
+if(LIBSQUISH_TESTS)
+    enable_testing()
+    set(TESTS_TARGET_PREFIX ${PROJECT_NAMESPACE_LC})
+    set(TESTS_COMMON_ALIAS_TARGET ${PROJECT_NAMESPACE}::TestCommon)
+    add_subdirectory(tests)
+endif()
 
-LIST(APPEND SQUISH_HDRS "squish_export.h")
+#--------------------Package Config-----------------------
 
-SET_TARGET_PROPERTIES(
-    squish PROPERTIES
-    PUBLIC_HEADER "${SQUISH_HDRS}"
-    VERSION 0.0
-    SOVERSION 0.0
-    DEBUG_POSTFIX "d"
-    XCODE_ATTRIBUTE_GCC_PREPROCESSOR_DEFINITIONS "$(SQUISH_CPP_$(CURRENT_ARCH))"
-    XCODE_ATTRIBUTE_OTHER_CFLAGS "$(SQUISH_CFLAGS_$(CURRENT_ARCH))"
-    XCODE_ATTRIBUTE_SQUISH_CPP_i386 "SQUISH_USE_SSE=2"
-    XCODE_ATTRIBUTE_SQUISH_CFLAGS_i386 ""
-    XCODE_ATTRIBUTE_SQUISH_CPP_ppc "SQUISH_USE_ALTIVEC=1"
-    XCODE_ATTRIBUTE_SQUISH_CFLAGS_ppc "-maltivec"
-    )
+ob_standard_project_package_config(
+    COMPATIBILITY "SameMajorVersion"
+    CONFIG STANDARD
+        TARGET_CONFIGS
+            TARGET "${PROJECT_NAMESPACE}::${LIB_ALIAS_NAME}" COMPONENT "${LIB_ALIAS_NAME}" DEFAULT
+            TARGET "${PROJECT_NAMESPACE}::${GEN_ALIAS_NAME}" COMPONENT "${GEN_ALIAS_NAME}" OPTIONAL
+            TARGET "${PROJECT_NAMESPACE}::${PNG_ALIAS_NAME}" COMPONENT "${PNG_ALIAS_NAME}" OPTIONAL
+)
 
-IF (BUILD_SQUISH_EXTRA)
-    SET(SQUISHTEST_SRCS extra/squishtest.cpp)
+#================= Install ==========================
 
-    ADD_EXECUTABLE(squishtest ${SQUISHTEST_SRCS})
-    SET_TARGET_PROPERTIES(squishtest PROPERTIES DEBUG_POSTFIX "d")
-    TARGET_LINK_LIBRARIES(squishtest squish)
+ob_standard_project_misc_install()
 
-    SET(SQUISHPNG_SRCS extra/squishpng.cpp)
+#====================== CPack ==============================
 
-    FIND_PACKAGE(PNG)
-
-    IF (PNG_FOUND)
-        SET(CMAKE_PLATFORM_IMPLICIT_INCLUDE_DIRECTORIES)
-        INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})
-        ADD_EXECUTABLE(squishpng ${SQUISHPNG_SRCS})
-        SET_TARGET_PROPERTIES(squishpng PROPERTIES DEBUG_POSTFIX "d")
-        TARGET_LINK_LIBRARIES(squishpng squish ${PNG_LIBRARIES})
-    ENDIF (PNG_FOUND)
-ENDIF (BUILD_SQUISH_EXTRA)
-
-IF (NOT DEFINED CMAKE_INSTALL_LIBDIR)
-   INCLUDE(GNUInstallDirs)
-   MARK_AS_ADVANCED(CLEAR
-      CMAKE_INSTALL_LIBDIR
-      CMAKE_INSTALL_INCLUDEDIR
-      )
-ENDIF (NOT DEFINED CMAKE_INSTALL_LIBDIR)
-
-INSTALL(
-    TARGETS squish
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    )
+include(OB/Packaging)
+ob_standard_project_package(VENDOR "oblivioncth")

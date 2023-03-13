@@ -39,7 +39,7 @@
 #include <sstream>
 #include <ctime>
 #include <cmath>
-#include <squish.h>
+#include <squish/squish.h>
 #include <png.h>
 
 #ifdef _MSC_VER
