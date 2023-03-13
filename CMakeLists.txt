@@ -14,7 +14,7 @@ cmake_minimum_required(VERSION 3.23.0...3.25.0)
 project(Squish
     VERSION 1.15
     LANGUAGES CXX
-    DESCRIPTION "S3TC/DXT standard image compression"
+    DESCRIPTION "S3TC/DXT compliant image compression"
 )
 
 # Get helper scripts
