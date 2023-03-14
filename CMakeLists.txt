@@ -47,34 +47,37 @@ if(LIBSQUISH_USE_OPENMP)
     find_package(OpenMP COMPONENTS C CXX)
 endif()
 
-# Process Targets
+# Target - Lib
 set(LIB_TARGET_NAME ${PROJECT_NAMESPACE_LC}_${PROJECT_NAME_LC})
 set(LIB_ALIAS_NAME ${PROJECT_NAME})
 set(LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 add_subdirectory("${LIB_PATH}")
 
+# Targets - Extras (Generator, Png)
+set(GEN_TARGET_NAME ${PROJECT_NAMESPACE_LC}_gen)
+set(GEN_ALIAS_NAME Generator)
+set(PNG_TARGET_NAME ${PROJECT_NAMESPACE_LC}_png)
+set(PNG_ALIAS_NAME Png)
 if(LIBSQUISH_EXTRAS)
-    set(GEN_TARGET_NAME ${PROJECT_NAMESPACE_LC}_gen)
-    set(GEN_ALIAS_NAME Generator)
     add_subdirectory(gen)
 
     find_package(PNG)
     if(PNG_FOUND)
-        set(PNG_TARGET_NAME ${PROJECT_NAMESPACE_LC}_png)
-        set(PNG_ALIAS_NAME Png)
         add_subdirectory(png)
     endif()
 endif()
 
+# Target - Doc
+set(DOC_TARGET_NAME ${PROJECT_NAMESPACE_LC}_docs)
 if(LIBSQUISH_DOCS)
-    set(DOC_TARGET_NAME ${PROJECT_NAMESPACE_LC}_docs)
     add_subdirectory(doc)
 endif()
 
+# Targets - Tests
+set(TESTS_TARGET_PREFIX ${PROJECT_NAMESPACE_LC})
+set(TESTS_COMMON_ALIAS_TARGET ${PROJECT_NAMESPACE}::TestCommon)
 if(LIBSQUISH_TESTS)
     enable_testing()
-    set(TESTS_TARGET_PREFIX ${PROJECT_NAMESPACE_LC})
-    set(TESTS_COMMON_ALIAS_TARGET ${PROJECT_NAMESPACE}::TestCommon)
     add_subdirectory(tests)
 endif()
 
