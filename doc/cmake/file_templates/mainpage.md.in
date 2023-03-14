@@ -175,7 +175,7 @@ It is recommended to use a  multi-configuration generators such as Ninja Multi-C
 
 #### CMake Install Components:
 
-- `libsquish` - Installs top-level files (README.md, CMake package configuration files, etc.)
+ - `libsquish` - Installs top-level files (README.md, CMake package configuration files, etc.)
  - `libsquish_docs` - Installs the libsquish documentation
  - `libsquish_squish` - Installs the main library
  - `libsquish_generator` - Installs the color lookup table generator
