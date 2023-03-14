@@ -7,7 +7,7 @@ ob_add_standard_executable(${PNG_TARGET_NAME}
         squishpng.cpp
     LINKS
         PRIVATE
-            Squish::Squish
+            libsquish::Squish
             PNG::PNG
     CONFIG STANDARD
 )
