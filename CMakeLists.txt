@@ -33,7 +33,7 @@ option(LIBSQUISH_USE_SSE2 "Build with SSE2." ON)
 option(LIBSQUISH_USE_ALTIVEC "Build with Altivec." OFF)
 option(LIBSQUISH_EXTRAS "Build extra tools." OFF)
 option(LIBSQUISH_DOCS "Build the squish documentation." OFF)
-option(LIBSQUISH_TEST "Build the squish tests." OFF)
+option(LIBSQUISH_TESTS "Build the squish tests." OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries." OFF) # Redundant due to OB, but explicit
 
 # C++

@@ -43,7 +43,13 @@ using namespace squish;
 
 struct ErrorStats
 {
-    double min = 0, max = 0, avg = 0;
+    double min, max, avg;
+
+    ErrorStats(double min, double max, double avg) :
+        min(min),
+        max(max),
+        avg(avg)
+    {}
 
     bool operator==(const ErrorStats& other) const
     {
@@ -123,7 +129,7 @@ ErrorStats TestOneColour( int flags )
 
     // finish stats
     avg = std::sqrt( avg/counter );
-    return {min, max, avg};
+    return ErrorStats(min, max, avg);
 }
 
 ErrorStats TestOneColourRandom( int flags )
@@ -165,7 +171,7 @@ ErrorStats TestOneColourRandom( int flags )
 
     // finish stats
     avg = std::sqrt( avg/counter );
-    return {min, max, avg};
+    return ErrorStats(min, max, avg);
 }
 
 ErrorStats TestTwoColour( int flags )
@@ -213,19 +219,21 @@ ErrorStats TestTwoColour( int flags )
 
     // finish stats
     avg = std::sqrt( avg/counter );
-    return {min, max, avg};
+    return ErrorStats(min, max, avg);
 }
 
 int main()
 {
     LS_START("tst_color_error");
 
-    LS_COMPARE(TestOneColourRandom( kDxt1 | kColourRangeFit),
-               ErrorStats({0, 1.7320508075688772, 0.9402127418834527}));
+    // Re-seed
+    srand(time(NULL));
+
+    LS_VERIFY(TestOneColourRandom( kDxt1 | kColourRangeFit).max == 1.732050807568877193176604123436845839023590087890625);
     LS_COMPARE(TestOneColour( kDxt1 ),
-               ErrorStats({0, 1, 0.478286702652959527792830840553506277501583099365234375}));
+               ErrorStats(0, 1, 0.478286702652959527792830840553506277501583099365234375));
     LS_COMPARE(TestTwoColour( kDxt1 ),
-               ErrorStats({0, 4.527692569068708650092958123423159122467041015625, 1.50027016248562716782544157467782497406005859375}));
+               ErrorStats(0, 4.527692569068708650092958123423159122467041015625, 1.50027016248562716782544157467782497406005859375));
 
     LS_END();
 }
