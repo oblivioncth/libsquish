@@ -21,16 +21,32 @@ namespace LSTest
         }
         return success;
     }
+
+    inline bool verify(bool res, const char* statement, const char* file, int line)
+    {
+        if(!res)
+        {
+            std::cout << "FAIL! : Statement evaluated to false: " << statement;
+            std::cout << "Failure Location: " << file << '(' << line << ')' << std::endl;
+        }
+        return res;
+    }
 }
 
-#define LS_COMPARE(actual, expected) \
+#define __LS_FAIL_CHECK(func_call) \
 do { \
-    if (!LSTest::compare(actual, expected, #actual, #expected, __FILE__, __LINE__)) \
+    if (!func_call) \
     { \
         std::cerr << "TEST FAILED!" << std::endl; \
         return -1; \
     } \
 } while (false)
+
+#define LS_COMPARE(actual, expected) \
+__LS_FAIL_CHECK(LSTest::compare(actual, expected, #actual, #expected, __FILE__, __LINE__))
+
+#define LS_VERIFY(statement) \
+__LS_FAIL_CHECK(LSTest::verify(static_cast<bool>(statement), #statement, __FILE__, __LINE__))
 
 #define LS_START(test) \
 std::cout << "START: " << test << std::endl;
