@@ -46,7 +46,7 @@ jobs:
         credentials: ${{ secrets.qt_ffynnon_cred }}
     - name: Install Graphviz
       run: choco install graphviz  
-    - name: Checkout STARpp
+    - name: Checkout libsquish
       uses: actions/checkout@v3
       with:
         path: ${{ env.libsquish_src_suffix }}
