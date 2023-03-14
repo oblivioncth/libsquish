@@ -19,7 +19,7 @@ project(Squish
 
 # Get helper scripts
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchOBCMake.cmake)
-fetch_ob_cmake("2a76621f22be51b43c7e77af96c5e2216e5776e7")
+fetch_ob_cmake("f0552c67d0f6938e3cabcb66ed4159e910fc1b12")
 
 # Initialize project according to standard rules
 include(OB/Project)

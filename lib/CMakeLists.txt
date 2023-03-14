@@ -26,6 +26,13 @@ if(LIBSQUISH_USE_ALTIVEC AND CMAKE_SYSTEM_PROCESSOR STREQUAL "powerpc")
     list(APPEND squish_opts "-maltivec")
 endif()
 
+# Set custom output name
+if(WIN32)
+    set(lib_output_name "${PROJECT_NAME}")
+else()
+    set(lib_output_name "${PROJECT_NAME_LC}")
+endif()
+
 # Add via ob standard library
 include(OB/Library)
 ob_add_standard_library(${LIB_TARGET_NAME}
@@ -34,6 +41,7 @@ ob_add_standard_library(${LIB_TARGET_NAME}
     EXPORT_HEADER
         BASE_NAME "${PROJECT_NAME_UC}"
         PATH "${PROJECT_NAME_LC}/${PROJECT_NAME_LC}_export.h"
+    OUTPUT_NAME "${lib_output_name}"
     HEADERS_PRIVATE
         alpha.h
         clusterfit.h
