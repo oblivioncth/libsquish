@@ -43,15 +43,13 @@ jobs:
     if: github.event.pull_request.merged == true
     uses: ./.github/workflows/build-libsquish-windows.yml
     secrets:
-      qt_ffynnon_cred: ${{ secrets.OBYBOT_FFYNNON_CREDS }}
+      ffynnon_cred: ${{ secrets.OBYBOT_FFYNNON_CREDS }}
       
   build_libsquish_release_linux:
     name: Build libsquish Release (Linux)
     needs: tag_master_and_sync_dev
     if: github.event.pull_request.merged == true
     uses: ./.github/workflows/build-libsquish-linux.yml
-    secrets:
-      qt_ffynnon_cred: ${{ secrets.OBYBOT_FFYNNON_CREDS }}
 
   update-docs:
     name: Update gh-pages
