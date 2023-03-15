@@ -1,10 +1,7 @@
 name: Build libsquish - Linux
 on:
   workflow_call:
-    secrets:
-      qt_ffynnon_cred:
-        description: 'Credentials for getting Qt from Ffynnon'
-        required: true
+  
 env:
   libsquish_src_suffix: libsquish/Source
   libsquish_src_dir: ${{ github.workspace }}/libsquish/Source
@@ -24,22 +21,18 @@ jobs:
             compiler: gcc
             c_comp: gcc-10
             cxx_comp: g++-10
-            qt_comp: clang12
           - os: ubuntu-20.04
             compiler: clang
             c_comp: clang-12
-            cxx_comp: clang++-12
-            qt_comp: clang12            
+            cxx_comp: clang++-12         
           - os: ubuntu-22.04
             compiler: gcc
             c_comp: gcc-12
             cxx_comp: g++-12
-            qt_comp: clang14
           - os: ubuntu-22.04
             compiler: clang
             c_comp: clang-14
             cxx_comp: clang++-14
-            qt_comp: clang14
           - lib_linkage: shared
             cmake_bsl: ON
           - lib_linkage: static

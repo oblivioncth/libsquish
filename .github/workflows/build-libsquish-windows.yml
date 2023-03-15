@@ -2,8 +2,8 @@ name: Build libsquish - Windows
 on:
   workflow_call:
     secrets:
-      qt_ffynnon_cred:
-        description: 'Credentials for getting Qt from Ffynnon'
+      ffynnon_cred:
+        description: 'Credentials for using Ffynnon-based actions'
         required: true
     outputs:
       doc_artifact_name:
@@ -43,7 +43,7 @@ jobs:
       with:
         version: 1.9.4
         os: windows
-        credentials: ${{ secrets.qt_ffynnon_cred }}
+        credentials: ${{ secrets.ffynnon_cred }}
     - name: Install Graphviz
       run: choco install graphviz  
     - name: Checkout libsquish
@@ -57,7 +57,7 @@ jobs:
       run: |
         echo "Setup C++ Build Environment..."
         CALL "${{ env.vs_dir }}\Common7\Tools\VsDevCmd.bat" -arch=amd64
-        echo "Configure CMake using Qt wrapper..."
+        echo "Configure CMake..."
         cmake -G "${{ env.cmake_gen }}" -S "${{ env.libsquish_src_dir}}" -B "${{ env.libsquish_build_dir }}" -D BUILD_SHARED_LIBS=${{ matrix.cmake_bsl }} -D LIBSQUISH_TESTS=ON -D LIBSQUISH_DOCS=ON -D LIBSQUISH_EXTRAS=ON
         echo "Changing to build directory..."
         cd "%libsquish_build_dir%"
