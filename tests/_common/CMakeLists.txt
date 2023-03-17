@@ -1,16 +1,19 @@
 #=== TESTS INTERFACE HELPER LIB ===
 
 # Setup lib target
-set(target_name "${TESTS_TARGET_PREFIX}_tst_common")
-add_library(${target_name} INTERFACE)
-add_library(${TESTS_COMMON_ALIAS_TARGET} ALIAS ${target_name})
+add_library(${TESTS_COMMON_TARGET} INTERFACE)
 
-target_sources(${target_name}
+target_sources(${TESTS_COMMON_TARGET}
     PRIVATE
         include/libsquish_test_common.h
 )
 
-target_include_directories(${target_name}
+target_include_directories(${TESTS_COMMON_TARGET}
     INTERFACE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+)
+
+target_link_libraries(${TESTS_COMMON_TARGET}
+    INTERFACE
+        libsquish::Squish
 )

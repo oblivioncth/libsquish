@@ -19,7 +19,7 @@ project(Squish
 
 # Get helper scripts
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchOBCMake.cmake)
-fetch_ob_cmake("a23b02ed06e6d1a2c91f5d81d74c127157289094")
+fetch_ob_cmake("202d606507f26a95c10d15ea170c7aed9e5c5341")
 
 # Initialize project according to standard rules
 include(OB/Project)
@@ -68,16 +68,16 @@ if(LIBSQUISH_EXTRAS)
 endif()
 
 # Target - Doc
-set(DOC_TARGET_NAME ${PROJECT_NAMESPACE_LC}_docs)
 if(LIBSQUISH_DOCS)
+    set(DOC_TARGET_NAME ${PROJECT_NAMESPACE_LC}_docs)
     add_subdirectory(doc)
 endif()
 
 # Targets - Tests
-set(TESTS_TARGET_PREFIX ${PROJECT_NAMESPACE_LC})
-set(TESTS_COMMON_ALIAS_TARGET ${PROJECT_NAMESPACE}::TestCommon)
 if(LIBSQUISH_TESTS)
     enable_testing()
+    set(TESTS_TARGET_PREFIX ${PROJECT_NAMESPACE_LC})
+    set(TESTS_COMMON_TARGET "${TESTS_TARGET_PREFIX}_tst_common")
     add_subdirectory(tests)
 endif()
 
