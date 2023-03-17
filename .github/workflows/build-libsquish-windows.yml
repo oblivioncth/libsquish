@@ -1,0 +1,91 @@
+name: Build libsquish - Windows
+on:
+  workflow_call:
+    secrets:
+      ffynnon_cred:
+        description: 'Credentials for using Ffynnon-based actions'
+        required: true
+    outputs:
+      doc_artifact_name:
+        description: "Name of artifact used to update docs"
+        value: ${{ jobs.build-libsquish.outputs.doc_artifact_name }}
+env:
+  libsquish_src_suffix: libsquish/Source
+  libsquish_src_dir: ${{ github.workspace }}/libsquish/Source
+  libsquish_build_dir: ${{ github.workspace }}/libsquish/Build
+
+jobs:
+  build-libsquish:
+    name: Build libsquish - Windows (Release)
+    strategy:
+      fail-fast: false
+      matrix:
+        lib_linkage: [shared, static]
+        include:
+          - lib_linkage: shared
+            cmake_bsl: ON
+            vcpkg_triplet: x64-windows
+          - lib_linkage: static
+            cmake_bsl: OFF
+            vcpkg_triplet: x64-windows-static
+    runs-on: windows-latest
+    env:
+      vs_dir: C:/Program Files/Microsoft Visual Studio/2022/Enterprise
+      cmake_gen: Ninja Multi-Config
+    outputs:
+      doc_artifact_name: ${{ steps.set_doc_artifact_name.outputs.doc_artifact_name }}
+    steps:
+    - name: Set derived variables with shell because GitHub Actions env context sucks
+      run: |
+        echo "libsquish_package_path=${{ env.libsquish_build_dir }}/out/dist" >> $Env:GITHUB_ENV
+        $libsquish_install_path="${{ env.libsquish_build_dir }}/out/install"
+        echo "libsquish_install_path=$libsquish_install_path" >> $Env:GITHUB_ENV
+    - name: Install libpng
+      run: vcpkg install libpng:${{ matrix.vcpkg_triplet }} 
+    - name: Install Doxygen
+      uses: oblivioncth/actions/general/cache-and-install-doxygen-from-ffynnon@dev
+      with:
+        version: 1.9.4
+        os: windows
+        credentials: ${{ secrets.ffynnon_cred }}
+    - name: Install Graphviz
+      run: choco install graphviz  
+    - name: Checkout libsquish
+      uses: actions/checkout@v3
+      with:
+        path: ${{ env.libsquish_src_suffix }}
+        fetch-depth: 0 # Required for verbose versioning to work correctly  
+    - name: Build/Install libsquish
+      working-directory: ${{ env.libsquish_src_dir }}
+      shell: cmd
+      run: |
+        echo "Setup C++ Build Environment..."
+        CALL "${{ env.vs_dir }}\Common7\Tools\VsDevCmd.bat" -arch=amd64
+        echo "Add vcpkg Toolchain Env Variable"
+        set "CMAKE_TOOLCHAIN_FILE=%VCPKG_INSTALLATION_ROOT%/scripts/buildsystems/vcpkg.cmake"
+        cmake -G "${{ env.cmake_gen }}" -S "${{ env.libsquish_src_dir}}" -B "${{ env.libsquish_build_dir }}" -D BUILD_SHARED_LIBS=${{ matrix.cmake_bsl }} -D LIBSQUISH_TESTS=ON -D LIBSQUISH_DOCS=ON -D LIBSQUISH_EXTRAS=ON -D VCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }}
+        echo "Changing to build directory..."
+        cd "%libsquish_build_dir%"
+        echo "Building libsquish Release/Docs..."
+        cmake --build . --target all --config Release
+        echo "Installing libsquish Release/Docs..."
+        cmake --install . --config Release
+        echo "Running tests..."
+        ctest -C Release --output-on-failure
+        echo "Packaging libsquish..."
+        cpack -C "Release"
+        echo "Build complete."
+    - name: Get libsquish artifact name
+      run: |
+        $artifact_name=$((Get-ChildItem -Path "${{ env.libsquish_package_path }}" -Filter *.zip)[0].BaseName)
+        echo "current_artifact_name=$artifact_name" >> $Env:GITHUB_ENV
+    - name: Set doc artifact name
+      id: set_doc_artifact_name
+      if: matrix.lib_linkage == 'static'
+      run: echo "doc_artifact_name=$current_artifact_name" >> $Env:GITHUB_OUTPUT
+    - name: Upload libsquish build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ env.current_artifact_name }}
+        path: ${{ env.libsquish_install_path }}
+        if-no-files-found: error

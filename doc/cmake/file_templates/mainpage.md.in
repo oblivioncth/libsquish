@@ -1,0 +1,259 @@
+libsquish {#mainpage}
+=====================
+The squish library (abbreviated to libsquish) is an open source DXT compression library written in C++ with the following features:
+
+ - Supports the DXT1, DXT3 and DXT5 formats.
+ - Optimized for both SSE and Altivec SIMD instruction sets.
+ - Builds on multiple platforms (x86 and PPC tested).
+ - Very simple interface (single header squish.h).
+ - Conforms to the S3TC and DXT standard
+ - Easy creation of compressed textures for OpenGL, DirectX, and other renderers
+ - Reentrant API for parallelization purposes
+ - OpenMP support
+
+A description of the algorithms used to perform the compression can be found on the following [blog post by Simon Brown](http://www.sjbrown.co.uk/2006/01/19/dxt-compression-techniques/).
+
+The cluster fit algorithm in squish forms the core DXT compression algorithm for [NVIDIA's Legacy Texture Tools](http://developer.nvidia.com/object/texture_tools.html). NVIDIA was kind enough to allow implementation improvements to be refactored back into the library.
+
+History
+-------
+
+ - libsquish was originally written by Simon Brown and hosted on [code.google.com](https://code.google.com/archive/p/libsquish/) (~2008)
+ - Ignacio Castaño provided significant contributions to the implementation of the library which were then merged upstream
+ - The project moved to [SourceForge](https://sourceforge.net/projects/libsquish/) where it is currently maintained by Stefan Roettger (~2015) 
+ - This CMake focused fork hosted on [GitHub](https://github.com/oblivioncth/libsquish) was created by Christian Heimlich (2023)
+
+Requirements
+------------
+
+ - An x86 or PPC, C++@CMAKE_CXX_STANDARD@ capable compiler (untested on other platforms)
+ - CMake @PROJECT_CMAKE_MINIMUM_REQUIRED_VERSION@ or greater
+
+Packaging
+----------
+libsquish is provided as a CMake package composed of a single library and accompanying public header file, along with a couple optional executables.
+
+#### Package Components:
+
+ - `Squish` - The main library
+ - `Generator` - The color lookup table generator application
+ - `Png` - The PNG compressor demo application
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Example libsquish Import
+find_package(libsquish)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If no components are specified in the `find_package()` call, only the main library will be imported.
+
+libsquish is also composed to gracefully support CMake's FetchContent mechanism. All exportable targets are named to match their corresponding component when packaged, and feature alias targets with the same names when building. This allows consumers to access the targets via the same name regardless of whether they are using a pre-built package of libsquish or building it as a sub-project.
+
+For example, the `Squish` component corresponds to the `libsquish_squish` target, which can also be referred to via `libsquish::Squish`.
+
+Getting Started
+---------------
+@note
+For a recommended alternative, see *Source Build as a Direct CMake Dependency*
+
+1) Download the latest [Release](https://github.com/oblivioncth/libfp/releases)
+
+2) Place the package somewhere CMake can find it
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Add to a default search path or...
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} path/to/libsquish_package)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+3) Import the package
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+find_package(libsquish 1.16 REQUIRED Squish) # Or whichever version
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+4) Link to the library
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+target_link_libraries(example_app PRIVATE libsquish::Squish)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+5) Include the public header in your code
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+#include <squish/squish.h>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+6) Review the documentation for the [squish](#squish) namespace.
+
+Minimal Example
+---------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+#include <squish/squish.h>
+#include <vector>
+#include <iostream>
+
+class RGBAImage
+{
+private:
+    const int PITCH = 4; // RGBA
+    
+    const int mWidth;
+    const int mHeight;
+    std::vector<squish::u8> mPixels;
+    
+public:
+    RGBAImage(int width, int height, bool dummy = false) :
+        mWidth(width),
+        mHeight(height),
+        mPixels(width * height * PITCH)
+    {
+        if(dummy)
+        {
+            // Fill image with dummy data
+            for(size_t i = 0; i < mPixels.size(); ++i)
+                mPixels[i] = i % 256;
+        }
+    }
+    
+    const int width() const { return mWidth; };
+    const int height() const { return mHeight; }
+    const int pitch() const { return PITCH; }
+    const squish::u8* data() const { return mPixels.data(); }
+    squish::u8* data() { return mPixels.data(); }
+    
+    bool operator==(const RGBAImage& other) { return this->mPixels == other.mPixels; }
+};
+
+int main()
+{
+	/* Input data, internally a contiguous array of (width * height) RGBA values (4-bytes per-pixel)
+	 * See documentation of squish::CompressImage()
+	 */
+	RGBAImage input(800, 600, true);
+
+	// Prepare for compression
+	int cFlags = squish::kDxt5;
+	int cSize = squish::GetStorageRequirements(input.width(), input.height(), cFlags);
+	std::vector<squish::u8> cPixels(cSize);
+
+	// Compress image
+	squish::CompressImage(input.data(), input.width(), input.height(), input.pitch(), 
+	                      cPixels.data(), cFlags);
+
+	// Decompress image
+	RGBAImage output(input.width(), input.height());
+	squish::DecompressImage(output.data(), input.width(), input.height(), input.pitch(), cPixels.data(), cFlags);
+
+	// Confirm
+	std::cout << (input == output);
+    
+    return 0;
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Building From Source
+--------------------
+The latest stable source is available in the 'master' branch of https://github.com/oblivioncth/libsquish
+
+The requirements for building from source are the same as for using libsquish, with the exception that Doxygen (as well as Graphviz) is also needed to build the documentation.
+
+It is recommended to use a  multi-configuration generators such as Ninja Multi-Config or Visual Studio.
+
+#### CMake Options:
+- `LIBSQUISH_USE_OPENMP` - Build libsquish using the OpenMP parallelization library (ON)
+- `LIBSQUISH_USE_SSE2` - Build libsquish using the SSE2 extended x86 instructions (ON)
+- `LIBSQUISH_USE_ALTIVEC` - Build libsquish using PPC AltiVec instructions (OFF)
+- `LIBSQUISH_EXTRAS` - Enable the 'generator' and 'png' targets (OFF)
+- `LIBSQUISH_DOCS` - Enable the libsquish documentation target (OFF)
+- `LIBSQUISH_TESTS` - Enable the libsquish test targets (OFF)
+- `BUILD_SHARED_LIBS` - Build libsquish as a shared library instead of a static one (OFF)
+
+#### CMake Targets:
+
+ - `all` - Builds the library, documentation if enabled, and 'extra' executables if enabled
+ - `install` - Installs the build output into `CMAKE_INSTALL_PREFIX`
+ - `libsquish_docs` - Builds the libsquish documentation
+ - `libsquish_squish` - Builds the main library
+ - `libsquish_generator` - Builds the color lookup table generator
+ - `libsquish_png` - Builds the PNG compressor demo
+ - `libsquish_tst_...`  - Builds test targets. To actually run tests, just build the general CMake tests target  `test`.
+
+#### CMake Install Components:
+
+ - `libsquish` - Installs top-level files (README.md, CMake package configuration files, etc.)
+ - `libsquish_docs` - Installs the libsquish documentation
+ - `libsquish_squish` - Installs the main library
+ - `libsquish_generator` - Installs the color lookup table generator
+ - `libsquish_png` - Installs the PNG compressor demo
+
+If libsquish is configured as a sub-project, its install components are automatically removed from the default install component, as to not pollute the install directory of the top-level project. They can still be installed by directly referencing their component names as shown above.
+
+#### Documentation:
+In order for the `@DOC_TARGET_NAME@` target to be generated the CMake cache variable **LIBSQUISH_DOCS** must be set to *ON* when CMake is invoked:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cmake.exe (...) -D LIBSQUISH_DOCS=ON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#### Package
+By default, the project configures CPack to create an artifact ZIP containing all installed components.
+
+The following is the general build process required to successfully generate this package via a shadow build on Windows:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Set the environment variables that follow as desired
+
+# Setup C++ Build Environment
+CALL "%VS_PATH%\Common7\Tools\VsDevCmd.bat" -arch=amd64
+
+# Configure CMake
+cmake -G "Ninja Multi-Config" -S "%LIBSQUISH_SOURCE_DIR%" -B "%LIBSQUISH_BUILD_DIR%" -D LIBSQUISH_DOCS=ON
+
+# Go to Build directory
+cd /D "%LIBSQUISH_BUILD_DIR%"
+
+# Build the Debug/Release libraries and documentation
+cmake --build . --target all --config Debug
+cmake --build . --target all --config Release
+
+# Install Debug/Release libraries and documentation
+cmake --install . --config Debug
+cmake --install . --config Release
+
+# Create the output package
+cpack -C Debug;Release
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Source Build as a Direct CMake Dependency
+-----------------------------------------
+If you want to use libsquish compiled from source directly as a dependency in your CMake project and don't care about the intermediary redistributables, it is recommended to do the following.
+
+Create 'Fetchlibsquish.cmake' and add it to CMAKE_MODULE_PATH:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Fetchlibsquish.cmake - REQUIRES GIT
+
+# This will checkout libsquish, make its targets available directly at configure time without needing to call
+# find_package(), and automatically build it as a dependency at build time.
+
+function(fetch_libsquish git_ref)
+    include(FetchContent)
+    FetchContent_Declare(libsquish
+        GIT_REPOSITORY "https://github.com/oblivioncth/libsquish"
+        GIT_TAG ${git_ref}
+    )
+    FetchContent_MakeAvailable(libsquish)
+endfunction()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Then in your CMake project:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+include(Fetchlibsquish)
+fetch_libsquish(<commitish_here>) # Get libsquish
+
+add_executable(some_executeable
+    ...
+)
+
+target_link_libraries(some_executeable
+    PRIVATE
+        libsquish::Squish
+)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This allows for more flexibility in downstream projects as they can more easily alter the configuration of libsquish on-the-fly as needed.
