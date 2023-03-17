@@ -71,7 +71,7 @@ jobs:
         echo Installing libsquish Release/Docs
         cmake --install . --config Release
         echo Running tests...
-        cmake --build . --target test --config Release
+        ctest -C Release --output-on-failure
         echo Packaging libsquish...
         cpack -C "Release"
         echo Build complete.
