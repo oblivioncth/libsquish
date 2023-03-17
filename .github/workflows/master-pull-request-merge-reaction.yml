@@ -55,6 +55,10 @@ jobs:
     name: Update gh-pages
     needs: [build_libsquish_release_windows]
     if: github.event.pull_request.merged == true
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.page-deployment.outputs.page_url }}
