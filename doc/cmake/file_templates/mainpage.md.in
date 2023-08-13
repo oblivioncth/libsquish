@@ -90,7 +90,7 @@ Minimal Example
 class RGBAImage
 {
 private:
-    const int PITCH = 4; // RGBA
+    const int CH_COUNT = 4; // RGBA
     
     const int mWidth;
     const int mHeight;
@@ -100,7 +100,7 @@ public:
     RGBAImage(int width, int height, bool dummy = false) :
         mWidth(width),
         mHeight(height),
-        mPixels(width * height * PITCH)
+        mPixels(width * height * CH_COUNT)
     {
         if(dummy)
         {
@@ -112,7 +112,7 @@ public:
     
     const int width() const { return mWidth; };
     const int height() const { return mHeight; }
-    const int pitch() const { return PITCH; }
+    const int pitch() const { return mWidth * CH_COUNT; }
     const squish::u8* data() const { return mPixels.data(); }
     squish::u8* data() { return mPixels.data(); }
     
@@ -138,9 +138,6 @@ int main()
 	// Decompress image
 	RGBAImage output(input.width(), input.height());
 	squish::DecompressImage(output.data(), input.width(), input.height(), input.pitch(), cPixels.data(), cFlags);
-
-	// Confirm
-	std::cout << (input == output);
     
     return 0;
 }
