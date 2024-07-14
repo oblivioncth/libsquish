@@ -14,29 +14,17 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-20.04, ubuntu-22.04]
-        compiler: [gcc, clang]
-        lib_linkage: [shared, static]
-        include:
-          - os: ubuntu-20.04
-            compiler: gcc
-            c_comp: gcc-10
-            cxx_comp: g++-10
-          - os: ubuntu-20.04
-            compiler: clang
-            c_comp: clang-12
-            cxx_comp: clang++-12         
-          - os: ubuntu-22.04
-            compiler: gcc
-            c_comp: gcc-12
-            cxx_comp: g++-12
-          - os: ubuntu-22.04
-            compiler: clang
-            c_comp: clang-14
-            cxx_comp: clang++-14
-          - lib_linkage: shared
-            cmake_bsl: ON
-          - lib_linkage: static
-            cmake_bsl: OFF
+        compiler: [{c: gcc-10, cxx: g++-10, qt: clang12}, {c: gcc-12, cxx: g++-12, qt: clang14}, {c: clang-12, cxx: clang++-12, qt: clang12}, {c: clang-14, cxx: clang++-14, qt: clang14}]
+        linkage: [{type: shared, cmake_bsl: ON}, {type: static, cmake_bsl: OFF}]
+        exclude:
+            - os: ubuntu-20.04
+              compiler: {c: gcc-12, cxx: g++-12, qt: clang14}
+            - os: ubuntu-20.04
+              compiler: {c: clang-14, cxx: clang++-14, qt: clang14}
+            - os: ubuntu-22.04
+              compiler: {c: gcc-10, cxx: g++-10, qt: clang12}
+            - os: ubuntu-22.04
+              compiler: {c: clang-12, cxx: clang++-12, qt: clang12}
     runs-on: ${{ matrix.os }}
     env:
       cmake_gen: Ninja Multi-Config
@@ -63,7 +51,7 @@ jobs:
       working-directory: ${{ env.libsquish_src_dir }}
       run: |
         echo Configuring CMake...
-        cmake -G "$cmake_gen" -S "$libsquish_src_dir" -B "$libsquish_build_dir" -D CMAKE_CXX_COMPILER="${{ matrix.cxx_comp }}" -D CMAKE_C_COMPILER="${{ matrix.c_comp }}" -D BUILD_SHARED_LIBS="${{ matrix.cmake_bsl }}" -D LIBSQUISH_TESTS=ON -D LIBSQUISH_DOCS=ON -D LIBSQUISH_EXTRAS=ON
+        cmake -G "$cmake_gen" -S "$libsquish_src_dir" -B "$libsquish_build_dir" -D CMAKE_CXX_COMPILER="${{ matrix.compiler.cxx }}" -D CMAKE_C_COMPILER="${{ matrix.compiler.c }}" -D BUILD_SHARED_LIBS="${{ matrix.linkage.cmake_bsl }}" -D LIBSQUISH_TESTS=ON -D LIBSQUISH_DOCS=ON -D LIBSQUISH_EXTRAS=ON
         echo Changing to build directory...
         cd "$libsquish_build_dir"
         echo Building libsquish Release/Docs...
@@ -79,7 +67,7 @@ jobs:
       id: get_artifact_name
       run: |
         cpack_name=$(find "${{ env.libsquish_package_path }}" -type f -name "*.zip")
-        artifact_name="$(basename "$cpack_name" .zip) [${{ matrix.cxx_comp }}]"
+        artifact_name="$(basename "$cpack_name" .zip) [${{ matrix.compiler.cxx }}]"
         echo "current_artifact_name=$artifact_name" >> $GITHUB_ENV
     - name: Upload libsquish build artifact
       uses: actions/upload-artifact@v4
