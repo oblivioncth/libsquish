@@ -84,7 +84,7 @@ jobs:
       if: matrix.lib_linkage == 'static'
       run: echo "doc_artifact_name=${{ env.current_artifact_name }}" >> $Env:GITHUB_OUTPUT
     - name: Upload libsquish build artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ env.current_artifact_name }}
         path: ${{ env.libsquish_install_path }}
