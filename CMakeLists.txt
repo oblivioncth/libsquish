@@ -44,7 +44,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Import OpenMP
 if(LIBSQUISH_USE_OPENMP)
-    find_package(OpenMP COMPONENTS C CXX)
+    find_package(OpenMP COMPONENTS CXX)
 endif()
 
 # Target - Lib
