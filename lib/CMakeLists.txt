@@ -7,7 +7,7 @@ set(squish_defs "")
 set(squish_opts "")
 
 if(LIBSQUISH_USE_OPENMP AND OpenMP_FOUND)
-    list(APPEND squish_links "OpenMP::OpenMP_C OpenMP::OpenMP_CXX")
+    list(APPEND squish_links "OpenMP::OpenMP_CXX")
     list(APPEND squish_defs "SQUISH_USE_OPENMP")
 endif()
 

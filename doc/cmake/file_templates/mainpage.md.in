@@ -33,7 +33,7 @@ Packaging
 ----------
 libsquish is provided as a CMake package composed of a single library and accompanying public header file, along with a couple optional executables.
 
-#### Package Components:
+### Package Components:
 
  - `Squish` - The main library
  - `Generator` - The color lookup table generator application
@@ -151,7 +151,7 @@ The requirements for building from source are the same as for using libsquish, w
 
 It is recommended to use a  multi-configuration generators such as Ninja Multi-Config or Visual Studio.
 
-#### CMake Options:
+### CMake Options:
 - `LIBSQUISH_USE_OPENMP` - Build libsquish using the OpenMP parallelization library (ON)
 - `LIBSQUISH_USE_SSE2` - Build libsquish using the SSE2 extended x86 instructions (ON)
 - `LIBSQUISH_USE_ALTIVEC` - Build libsquish using PPC AltiVec instructions (OFF)
@@ -160,7 +160,7 @@ It is recommended to use a  multi-configuration generators such as Ninja Multi-C
 - `LIBSQUISH_TESTS` - Enable the libsquish test targets (OFF)
 - `BUILD_SHARED_LIBS` - Build libsquish as a shared library instead of a static one (OFF)
 
-#### CMake Targets:
+### CMake Targets:
 
  - `all` - Builds the library, documentation if enabled, and 'extra' executables if enabled
  - `install` - Installs the build output into `CMAKE_INSTALL_PREFIX`
@@ -170,7 +170,7 @@ It is recommended to use a  multi-configuration generators such as Ninja Multi-C
  - `libsquish_png` - Builds the PNG compressor demo
  - `libsquish_tst_...`  - Builds test targets. To actually run tests, just build the general CMake tests target  `test`.
 
-#### CMake Install Components:
+### CMake Install Components:
 
  - `libsquish` - Installs top-level files (README.md, CMake package configuration files, etc.)
  - `libsquish_docs` - Installs the libsquish documentation
@@ -180,13 +180,16 @@ It is recommended to use a  multi-configuration generators such as Ninja Multi-C
 
 If libsquish is configured as a sub-project, its install components are automatically removed from the default install component, as to not pollute the install directory of the top-level project. They can still be installed by directly referencing their component names as shown above.
 
-#### Documentation:
+### Documentation:
 In order for the `@DOC_TARGET_NAME@` target to be generated the CMake cache variable **LIBSQUISH_DOCS** must be set to *ON* when CMake is invoked:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 cmake.exe (...) -D LIBSQUISH_DOCS=ON
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#### Package
+### Tests:
+The project contains a suite of tests to ensure that the library functions as intended.
+
+### Package
 By default, the project configures CPack to create an artifact ZIP containing all installed components.
 
 The following is the general build process required to successfully generate this package via a shadow build on Windows:
