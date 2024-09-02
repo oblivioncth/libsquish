@@ -1,7 +1,7 @@
 changelog:
   exclude:
     labels:
-      - release-pr
+      - release
   categories:
     - title: New Features
       labels:
