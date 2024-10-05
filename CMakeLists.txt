@@ -12,14 +12,14 @@ cmake_minimum_required(VERSION 3.23.0...3.26.0)
 # Project
 # NOTE: DON'T USE TRAILING ZEROS IN VERSIONS
 project(Squish
-    VERSION 1.15.1.2
+    VERSION 1.15.1.3
     LANGUAGES CXX
     DESCRIPTION "S3TC/DXT compliant image compression"
 )
 
 # Get helper scripts
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchOBCMake.cmake)
-fetch_ob_cmake("v0.3.5")
+fetch_ob_cmake("v0.3.7.1")
 
 # Initialize project according to standard rules
 include(OB/Project)
