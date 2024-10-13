@@ -20,6 +20,7 @@ jobs:
     secrets:
       ffynnon_access: ${{ secrets.OBYBOT_FFYNNON_ACCESS }}
     with:
+      options_prefix: LIBSQUISH
       pre_build_steps: |
         - name: Install OpenMP lib [Linux]
           if: env.run_is_linux == 'true'
