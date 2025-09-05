@@ -42,33 +42,32 @@ ob_add_standard_library(${LIB_TARGET_NAME}
         BASE_NAME "${PROJECT_NAME_UC}"
         PATH "${PROJECT_NAME_LC}/${PROJECT_NAME_LC}_export.h"
     OUTPUT_NAME "${lib_output_name}"
-    HEADERS_PRIVATE
-        alpha.h
-        clusterfit.h
-        colourblock.h
-        colourfit.h
-        colourset.h
-        maths.h
-        rangefit.h
-        simd.h
-        simd_float.h
-        simd_sse.h
-        simd_ve.h
-        singlecolourfit.h
-        singlecolourlookup.inl
     HEADERS_API
         COMMON "${PROJECT_NAME_LC}"
         FILES
             squish.h
     IMPLEMENTATION
+        alpha.h
         alpha.cpp
+        clusterfit.h
         clusterfit.cpp
+        colourblock.h
         colourblock.cpp
+        colourfit.h
         colourfit.cpp
+        colourset.h
         colourset.cpp
+        maths.h
         maths.cpp
+        rangefit.h
         rangefit.cpp
+        simd.h
+        simd_float.h
+        simd_sse.h
+        simd_ve.h
+        singlecolourfit.h
         singlecolourfit.cpp
+        singlecolourlookup.inl
         squish.cpp
     LINKS
         PRIVATE ${squish_links}

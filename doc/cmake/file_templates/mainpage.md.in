@@ -20,7 +20,7 @@ History
 
  - libsquish was originally written by Simon Brown and hosted on [code.google.com](https://code.google.com/archive/p/libsquish/) (~2008)
  - Ignacio Castaño provided significant contributions to the implementation of the library which were then merged upstream
- - The project moved to [SourceForge](https://sourceforge.net/projects/libsquish/) where it is currently maintained by Stefan Roettger (~2015) 
+ - The project moved to [SourceForge](https://sourceforge.net/projects/libsquish/) where it is currently maintained by Stefan Roettger (~2015)
  - This CMake focused fork hosted on [GitHub](https://github.com/oblivioncth/libsquish) was created by Christian Heimlich (2023)
 
 Requirements
@@ -91,11 +91,11 @@ class RGBAImage
 {
 private:
     const int CH_COUNT = 4; // RGBA
-    
+
     const int mWidth;
     const int mHeight;
     std::vector<squish::u8> mPixels;
-    
+
 public:
     RGBAImage(int width, int height, bool dummy = false) :
         mWidth(width),
@@ -109,13 +109,13 @@ public:
                 mPixels[i] = i % 256;
         }
     }
-    
+
     const int width() const { return mWidth; };
     const int height() const { return mHeight; }
     const int pitch() const { return mWidth * CH_COUNT; }
     const squish::u8* data() const { return mPixels.data(); }
     squish::u8* data() { return mPixels.data(); }
-    
+
     bool operator==(const RGBAImage& other) { return this->mPixels == other.mPixels; }
 };
 
@@ -132,13 +132,13 @@ int main()
 	std::vector<squish::u8> cPixels(cSize);
 
 	// Compress image
-	squish::CompressImage(input.data(), input.width(), input.height(), input.pitch(), 
+	squish::CompressImage(input.data(), input.width(), input.height(), input.pitch(),
 	                      cPixels.data(), cFlags);
 
 	// Decompress image
 	RGBAImage output(input.width(), input.height());
 	squish::DecompressImage(output.data(), input.width(), input.height(), input.pitch(), cPixels.data(), cFlags);
-    
+
     return 0;
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -149,7 +149,7 @@ The latest stable source is available in the 'master' branch of https://github.c
 
 The requirements for building from source are the same as for using libsquish, with the exception that Doxygen (as well as Graphviz) is also needed to build the documentation.
 
-It is recommended to use a  multi-configuration generators such as Ninja Multi-Config or Visual Studio.
+The `ninja` generator is recommended.
 
 ### CMake Options:
 - `LIBSQUISH_USE_OPENMP` - Build libsquish using the OpenMP parallelization library (ON)

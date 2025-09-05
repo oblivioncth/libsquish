@@ -17,4 +17,7 @@ ob_standard_documentation(${DOC_TARGET_NAME}
     PROJ_NAME "${PROJECT_NAMESPACE}"
     INPUT_LIST
         "${LIB_PATH}/include"
+    THEME_COLORS
+        PRIMARY "#1F32A8"
+        NIGHT_PRIMARY "#2A43D3"
 )
