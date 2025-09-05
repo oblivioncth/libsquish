@@ -7,7 +7,7 @@
 #================= Project Setup ==========================
 
 # CMake
-cmake_minimum_required(VERSION 3.23.0...3.26.0)
+cmake_minimum_required(VERSION 3.23.0...3.31.0)
 
 # Project
 # NOTE: DON'T USE TRAILING ZEROS IN VERSIONS
@@ -19,7 +19,7 @@ project(Squish
 
 # Get helper scripts
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchOBCMake.cmake)
-fetch_ob_cmake("v0.3.7.1")
+fetch_ob_cmake("v0.3.10")
 
 # Initialize project according to standard rules
 include(OB/Project)
