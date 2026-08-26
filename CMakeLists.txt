@@ -84,6 +84,15 @@ endif()
 
 #--------------------Package Config-----------------------
 
+set(CONDITIONAL_DEPS "")
+if(LIBSQUISH_USE_OPENMP)
+    set(CONDITIONAL_DEPS
+        DEPENDS
+            PACKAGE "OpenMP"
+            COMPONENTS "CXX"
+    )
+endif()
+
 ob_standard_project_package_config(
     COMPATIBILITY "SameMajorVersion"
     CONFIG STANDARD
@@ -91,6 +100,7 @@ ob_standard_project_package_config(
             TARGET "${PROJECT_NAMESPACE}::${LIB_ALIAS_NAME}" COMPONENT "${LIB_ALIAS_NAME}" DEFAULT
             TARGET "${PROJECT_NAMESPACE}::${GEN_ALIAS_NAME}" COMPONENT "${GEN_ALIAS_NAME}" OPTIONAL
             TARGET "${PROJECT_NAMESPACE}::${PNG_ALIAS_NAME}" COMPONENT "${PNG_ALIAS_NAME}" OPTIONAL
+        ${CONDITIONAL_DEPS}
 )
 
 #================= Install ==========================
