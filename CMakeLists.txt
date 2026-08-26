@@ -12,14 +12,14 @@ cmake_minimum_required(VERSION 3.23.0...3.31.0)
 # Project
 # NOTE: DON'T USE TRAILING ZEROS IN VERSIONS
 project(Squish
-    VERSION 1.15.1.4
+    VERSION 1.15.2
     LANGUAGES CXX
     DESCRIPTION "S3TC/DXT compliant image compression"
 )
 
 # Get helper scripts
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FetchOBCMake.cmake)
-fetch_ob_cmake("v0.3.12")
+fetch_ob_cmake("v0.4.0.2")
 
 # Initialize project according to standard rules
 include(OB/Project)
@@ -34,6 +34,7 @@ option(LIBSQUISH_USE_ALTIVEC "Build with Altivec." OFF)
 option(LIBSQUISH_EXTRAS "Build extra tools." OFF)
 option(LIBSQUISH_DOCS "Build the squish documentation." OFF)
 option(LIBSQUISH_TESTS "Build the squish tests." OFF)
+option(LIBSQUISH_INSTALL_MISC "Enable installation of misc components (e.g README.md/LICENSE)" ON)
 option(BUILD_SHARED_LIBS "Build shared libraries." OFF) # Redundant due to OB, but explicit
 
 # C++
@@ -94,7 +95,9 @@ ob_standard_project_package_config(
 
 #================= Install ==========================
 
-ob_standard_project_misc_install()
+if(LIBSQUISH_INSTALL_MISC)
+    ob_standard_project_misc_install()
+endif()
 
 #====================== CPack ==============================
 
