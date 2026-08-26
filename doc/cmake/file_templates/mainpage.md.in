@@ -158,6 +158,7 @@ The `ninja` generator is recommended.
 - `LIBSQUISH_EXTRAS` - Enable the 'generator' and 'png' targets (OFF)
 - `LIBSQUISH_DOCS` - Enable the libsquish documentation target (OFF)
 - `LIBSQUISH_TESTS` - Enable the libsquish test targets (OFF)
+- `LIBSQUISH_INSTALL_MISC` - Set to `ON` to enable installation of misc components (e.g. README.md/LICENSE) (ON)
 - `BUILD_SHARED_LIBS` - Build libsquish as a shared library instead of a static one (OFF)
 
 ### CMake Targets:
@@ -172,8 +173,9 @@ The `ninja` generator is recommended.
 
 ### CMake Install Components:
 
- - `libsquish` - Installs top-level files (README.md, CMake package configuration files, etc.)
+ - `libsquish` - Installs top-level files (CMake package configuration files, etc.)
  - `libsquish_docs` - Installs the libsquish documentation
+ - `libsquish_misc` - Installs miscellaneous files (e.g. README.md/LICENSE)
  - `libsquish_squish` - Installs the main library
  - `libsquish_generator` - Installs the color lookup table generator
  - `libsquish_png` - Installs the PNG compressor demo
